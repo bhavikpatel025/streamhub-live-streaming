@@ -1,0 +1,6 @@
+@StreamHub.API_HostAddress = http://localhost:5234
+
+GET {{StreamHub.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
