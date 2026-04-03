@@ -1,1 +1,247 @@
-<p>streamer-dashboard works!</p>
+<section class="app-page surface-list">
+  <div class="page-hero">
+    <div class="page-heading">
+      <span class="page-heading__eyebrow">Creator command center</span>
+      <h1 class="page-heading__title">Manage every stream from a focused broadcast dashboard.</h1>
+      <p class="page-heading__description">
+        Create stream sessions, monitor channel health, reveal secure keys when needed, and go live with a polished workflow.
+      </p>
+    </div>
+
+    <div class="metric-grid">
+      <div class="metric-card">
+        <span class="metric-card__label">Total streams</span>
+        <strong class="metric-card__value">{{ myStreams.length }}</strong>
+      </div>
+      <div class="metric-card">
+        <span class="metric-card__label">Currently live</span>
+        <strong class="metric-card__value">{{ liveStreams }}</strong>
+      </div>
+      <div class="metric-card">
+        <span class="metric-card__label">Combined viewers</span>
+        <strong class="metric-card__value">{{ totalViewers }}</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="dashboard-grid">
+    <p-card styleClass="dashboard-card">
+      <ng-template pTemplate="header">
+        <div class="dashboard-card__header">
+          <div>
+            <span class="dashboard-card__eyebrow">Create a new room</span>
+            <h2>New stream</h2>
+          </div>
+        </div>
+      </ng-template>
+
+      <form [formGroup]="createStreamForm" class="stream-form" (ngSubmit)="createStream()">
+        <div class="stream-form__field">
+          <label for="title">Stream title</label>
+          <input
+            id="title"
+            pInputText
+            formControlName="title"
+            placeholder="Friday night speedrun, product launch, creator AMA...">
+        </div>
+
+        <div class="stream-form__field">
+          <label for="description">Description</label>
+          <textarea
+            id="description"
+            pInputTextarea
+            formControlName="description"
+            rows="5"
+            placeholder="Tell viewers what to expect from this stream.">
+          </textarea>
+        </div>
+
+        <p-button
+          type="submit"
+          label="Create stream"
+          icon="pi pi-plus"
+          [loading]="creating"
+          [disabled]="createStreamForm.invalid">
+        </p-button>
+      </form>
+    </p-card>
+
+    <p-card styleClass="dashboard-card dashboard-card--detail">
+      <ng-template pTemplate="header">
+        <div class="dashboard-card__header">
+          <div>
+            <span class="dashboard-card__eyebrow">Selected session</span>
+            <h2>{{ selectedStream?.title || 'Choose a stream' }}</h2>
+          </div>
+          @if (selectedStream) {
+            <p-tag [value]="selectedStream.isLive ? 'LIVE' : 'Offline'" [severity]="getStatusSeverity(selectedStream)"></p-tag>
+          }
+        </div>
+      </ng-template>
+
+      @if (selectedStream) {
+        <div class="selected-stream">
+          <div class="selected-stream__meta">
+            <div>
+              <span>Audience</span>
+              <strong>{{ selectedStream.viewerCount }} viewers</strong>
+            </div>
+            <div>
+              <span>Host</span>
+              <strong>{{ selectedStream.username }}</strong>
+            </div>
+          </div>
+
+          <p>{{ selectedStream.description }}</p>
+
+          <div class="section-actions">
+            @if (!selectedStream.isLive) {
+              <p-button
+                label="Go live"
+                icon="pi pi-play"
+                [loading]="starting"
+                (onClick)="startStream()">
+              </p-button>
+            } @else {
+              <p-button
+                label="Stop stream"
+                icon="pi pi-stop"
+                severity="danger"
+                [loading]="stopping"
+                (onClick)="stopStream()">
+              </p-button>
+            }
+
+            <p-button
+              label="Reveal stream key"
+              icon="pi pi-key"
+              severity="secondary"
+              (onClick)="loadStreamKey()">
+            </p-button>
+          </div>
+        </div>
+      } @else {
+        <div class="empty-state">
+          <h3>Select a stream from the table</h3>
+          <p>Use the actions column to open management controls for an existing stream.</p>
+        </div>
+      }
+    </p-card>
+  </div>
+
+  <p-card styleClass="dashboard-card">
+    <ng-template pTemplate="header">
+      <div class="dashboard-card__header">
+        <div>
+          <span class="dashboard-card__eyebrow">Library</span>
+          <h2>Your stream catalog</h2>
+        </div>
+        <p-button
+          label="Refresh"
+          icon="pi pi-refresh"
+          severity="secondary"
+          styleClass="p-button-sm"
+          (onClick)="loadMyStreams()">
+        </p-button>
+      </div>
+    </ng-template>
+
+    @if (loadingStreams) {
+      <div class="table-loader">
+        <p-progressSpinner ariaLabel="Loading streams"></p-progressSpinner>
+      </div>
+    } @else if (myStreams.length === 0) {
+      <div class="empty-state">
+        <h3>No streams created yet</h3>
+        <p>Create your first stream and your secure RTMP key will be ready immediately.</p>
+      </div>
+    } @else {
+      <p-table [value]="myStreams" [tableStyle]="{ 'min-width': '60rem' }" responsiveLayout="scroll">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Stream</th>
+            <th>Status</th>
+            <th>Viewers</th>
+            <th>Created</th>
+            <th>Actions</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-stream>
+          <tr>
+            <td>
+              <div class="table-stream">
+                <p-avatar [label]="getUserInitial(stream.username)" shape="circle"></p-avatar>
+                <div>
+                  <strong>{{ stream.title }}</strong>
+                  <span>{{ stream.description }}</span>
+                </div>
+              </div>
+            </td>
+            <td>
+              <p-tag [value]="stream.isLive ? 'LIVE' : 'Offline'" [severity]="getStatusSeverity(stream)"></p-tag>
+            </td>
+            <td>{{ stream.viewerCount }}</td>
+            <td>{{ stream.createdAt | date: 'mediumDate' }}</td>
+            <td>
+              <div class="table-actions">
+                <p-button
+                  icon="pi pi-cog"
+                  severity="secondary"
+                  styleClass="p-button-sm p-button-text"
+                  (onClick)="selectStream(stream)">
+                </p-button>
+                <p-button
+                  icon="pi pi-trash"
+                  severity="danger"
+                  styleClass="p-button-sm p-button-text"
+                  (onClick)="deleteStream(stream.id)">
+                </p-button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    }
+  </p-card>
+
+  <p-dialog
+    header="Stream configuration"
+    [(visible)]="streamKeyDialogVisible"
+    [modal]="true"
+    [style]="{ width: 'min(90vw, 40rem)' }"
+    [draggable]="false"
+    [resizable]="false">
+    @if (streamKey) {
+      <div class="stream-key-panel">
+        <div class="stream-key-panel__field">
+          <label>RTMP URL</label>
+          <div class="stream-key-panel__value">
+            <code>{{ streamKey.rtmpUrl }}</code>
+            <p-button
+              icon="pi pi-copy"
+              severity="secondary"
+              styleClass="p-button-sm"
+              (onClick)="copyToClipboard(streamKey.rtmpUrl, 'RTMP URL')">
+            </p-button>
+          </div>
+        </div>
+
+        <div class="stream-key-panel__field">
+          <label>Stream key</label>
+          <div class="stream-key-panel__value">
+            <code>{{ streamKey.streamKey }}</code>
+            <p-button
+              icon="pi pi-copy"
+              severity="secondary"
+              styleClass="p-button-sm"
+              (onClick)="copyToClipboard(streamKey.streamKey, 'Stream key')">
+            </p-button>
+          </div>
+        </div>
+      </div>
+    }
+  </p-dialog>
+
+  <p-confirmDialog></p-confirmDialog>
+</section>

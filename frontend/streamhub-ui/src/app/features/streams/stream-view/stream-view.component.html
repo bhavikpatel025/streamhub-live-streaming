@@ -1,1 +1,63 @@
-<p>stream-view works!</p>
+<section class="app-page">
+  @if (loading) {
+    <div class="watch-skeleton">
+      <p-skeleton width="100%" height="28rem" borderRadius="1.5rem"></p-skeleton>
+      <div class="watch-skeleton__meta">
+        <p-skeleton width="60%" height="2rem"></p-skeleton>
+        <p-skeleton width="35%" height="1rem"></p-skeleton>
+        <p-skeleton width="85%" height="1rem"></p-skeleton>
+      </div>
+    </div>
+  } @else if (stream) {
+    <div class="watch-layout">
+      <div class="watch-layout__main">
+        <app-video-player [streamKey]="stream.streamKey"></app-video-player>
+
+        <p-card styleClass="watch-meta-card">
+          <div class="watch-meta">
+            <div class="watch-meta__title">
+              <div class="watch-meta__status">
+                <p-tag value="LIVE" severity="danger"></p-tag>
+                <span>{{ viewerCount }} watching now</span>
+              </div>
+              <h1>{{ stream.title }}</h1>
+              <p>{{ stream.description }}</p>
+            </div>
+
+            <div class="watch-meta__host">
+              <div class="watch-meta__identity">
+                <p-avatar [label]="getUserInitial(stream.username)" shape="circle" size="large"></p-avatar>
+                <div>
+                  <strong>{{ stream.username }}</strong>
+                  <span>Streaming now</span>
+                </div>
+              </div>
+
+              <p-button
+                label="Back to browse"
+                icon="pi pi-arrow-left"
+                severity="secondary"
+                (onClick)="goBack()">
+              </p-button>
+            </div>
+          </div>
+        </p-card>
+      </div>
+
+      <aside class="watch-layout__chat">
+        <app-chat [streamId]="stream.id"></app-chat>
+      </aside>
+    </div>
+  } @else {
+    <div class="empty-state">
+      <h3>Stream not found</h3>
+      <p>This broadcast is no longer available.</p>
+      <p-button
+        label="Back to streams"
+        icon="pi pi-arrow-left"
+        severity="secondary"
+        (onClick)="goBack()">
+      </p-button>
+    </div>
+  }
+</section>

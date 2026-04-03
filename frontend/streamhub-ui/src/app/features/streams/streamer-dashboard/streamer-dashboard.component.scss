@@ -1,0 +1,158 @@
+.dashboard-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: minmax(320px, 0.95fr) minmax(0, 1.05fr);
+}
+
+:host ::ng-deep .dashboard-card {
+  border-radius: var(--app-radius-xl);
+  border: 1px solid var(--app-border-color);
+  background: rgba(11, 18, 32, 0.9);
+  box-shadow: var(--app-shadow-soft);
+}
+
+.dashboard-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.dashboard-card__eyebrow {
+  color: var(--app-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.75rem;
+}
+
+.dashboard-card__header h2 {
+  margin: 0.4rem 0 0;
+  font-size: 1.55rem;
+}
+
+.stream-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.stream-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.stream-form__field label {
+  color: var(--app-text-soft);
+}
+
+.selected-stream {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.selected-stream__meta {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.selected-stream__meta div {
+  padding: 1rem;
+  border-radius: 1rem;
+  background: rgba(148, 163, 184, 0.08);
+}
+
+.selected-stream__meta span {
+  display: block;
+  color: var(--app-text-muted);
+  font-size: 0.8rem;
+  margin-bottom: 0.35rem;
+}
+
+.selected-stream p {
+  margin: 0;
+  color: var(--app-text-soft);
+  line-height: 1.7;
+}
+
+.table-loader {
+  display: flex;
+  justify-content: center;
+  padding: 2rem 0;
+}
+
+.table-stream {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.table-stream div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.table-stream span {
+  color: var(--app-text-muted);
+  max-width: 28rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.table-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.stream-key-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.stream-key-panel__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.stream-key-panel__field label {
+  color: var(--app-text-muted);
+  font-size: 0.9rem;
+}
+
+.stream-key-panel__value {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border-radius: 1rem;
+  background: rgba(148, 163, 184, 0.08);
+}
+
+.stream-key-panel__value code {
+  flex: 1;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 1024px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .selected-stream__meta {
+    grid-template-columns: 1fr;
+  }
+
+  .stream-key-panel__value {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

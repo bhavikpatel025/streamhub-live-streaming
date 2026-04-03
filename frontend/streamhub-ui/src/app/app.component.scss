@@ -1,0 +1,119 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  color: #e2e8f0;
+}
+
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.app-shell__header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  padding: 1rem 1rem 0;
+}
+
+.app-nav {
+  width: min(100%, 1360px);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-radius: 1.5rem;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  background: rgba(15, 23, 42, 0.82);
+  backdrop-filter: blur(20px);
+  padding: 0.875rem 1rem;
+  box-shadow: 0 1.5rem 3rem rgba(2, 6, 23, 0.28);
+}
+
+.brand-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9rem;
+  text-decoration: none;
+  color: #edf2ff;
+}
+
+.brand-mark__signal {
+  width: 2.75rem;
+  height: 2.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 1rem;
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.96), rgba(249, 115, 22, 0.82));
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 0.8rem 1.8rem rgba(239, 68, 68, 0.24);
+}
+
+.brand-mark__copy {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.brand-mark__copy small {
+  color: #94a3b8;
+  font-size: 0.75rem;
+}
+
+.desktop-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  flex-wrap: wrap;
+}
+
+.desktop-actions__identity {
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.12);
+  color: #cbd5e1;
+  font-size: 0.95rem;
+}
+
+.app-shell__content {
+  flex: 1 1 auto;
+  min-height: calc(100vh - 80px);
+  padding: 1.5rem 1rem 2rem;
+}
+
+.app-link {
+  color: #cbd5e1;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.app-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.7rem 1rem;
+  border-radius: 999px;
+  border: 0;
+  background: #ef4444;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.app-button--secondary {
+  background: rgba(148, 163, 184, 0.16);
+  color: #e2e8f0;
+}
+
+@media (max-width: 960px) {
+  .app-nav {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

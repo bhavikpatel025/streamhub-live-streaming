@@ -1,60 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { CardModule } from 'primeng/card';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { TagModule } from 'primeng/tag';
 import Hls from 'hls.js';
 import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-video-player',
   standalone: true,
-  imports: [CommonModule],
-  template: `
-    <div class="video-container">
-      <video
-        #videoElement
-        class="video-player"
-        controls
-        autoplay
-        playsinline
-        crossorigin="anonymous"
-        [poster]="posterUrl">
-        Your browser does not support the video tag.
-      </video>
-
-      @if (errorMessage) {
-        <div class="alert alert-danger mt-3">
-          {{ errorMessage }}
-        </div>
-      }
-
-      @if (loading) {
-        <div class="loading-overlay">
-          <div class="spinner-border text-light" role="status">
-            <span class="visually-hidden">Loading...</span>
-          </div>
-        </div>
-      }
-    </div>
-  `,
-  styles: [`
-    .video-container {
-      position: relative;
-      width: 100%;
-      background: #000;
-    }
-
-    .video-player {
-      width: 100%;
-      height: auto;
-      max-height: 70vh;
-    }
-
-    .loading-overlay {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
-  `]
+  imports: [CommonModule, CardModule, ProgressSpinnerModule, TagModule],
+  templateUrl: './video-player.component.html',
+  styleUrls: ['./video-player.component.scss']
 })
 export class VideoPlayerComponent implements OnInit, OnDestroy {
   @ViewChild('videoElement', { static: true }) videoElement!: ElementRef<HTMLVideoElement>;
@@ -123,12 +80,12 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
             this.handleNetworkError(streamUrl);
             break;
           case Hls.ErrorTypes.MEDIA_ERROR:
-            this.errorMessage = 'Media error. Trying to recover...';
+            this.errorMessage = 'Playback issue detected. Recovering stream...';
             this.hls?.recoverMediaError();
             break;
           default:
             this.loading = false;
-            this.errorMessage = 'Fatal error. Cannot play stream.';
+            this.errorMessage = 'We could not render this stream.';
             this.destroyPlayer();
             break;
         }
@@ -162,12 +119,12 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
 
     if (this.manifestRetryCount >= this.maxManifestRetries) {
       this.loading = false;
-      this.errorMessage = 'Stream is not available right now. Please try again in a moment.';
+      this.errorMessage = 'Stream is not available right now. Please try again shortly.';
       return;
     }
 
     this.manifestRetryCount += 1;
-    this.errorMessage = 'Waiting for the live stream to become available...';
+    this.errorMessage = 'Waiting for the live feed to become available...';
 
     clearTimeout(this.manifestRetryTimer);
     this.manifestRetryTimer = setTimeout(() => {

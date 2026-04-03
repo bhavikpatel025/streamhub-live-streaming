@@ -1,125 +1,24 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
+import { AvatarModule } from 'primeng/avatar';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { TagModule } from 'primeng/tag';
 import { SignalRService } from '../../../core/services/signalr.service';
 import { ChatMessage } from '../../../core/models/chat.model';
 
 @Component({
   selector: 'app-chat',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
-  template: `
-    <div class="chat-container">
-      <div class="chat-header">
-        <h5>Live Chat</h5>
-        <span class="badge bg-success">{{ messages.length }} messages</span>
-      </div>
-
-      <div class="chat-messages" #chatMessages>
-        @for (message of messages; track message.id) {
-          <div class="chat-message">
-            <span class="username">{{ message.username }}:</span>
-            <span class="message">{{ message.message }}</span>
-            <span class="timestamp">{{ message.sentAt | date: 'short' }}</span>
-          </div>
-        }
-
-        @if (messages.length === 0) {
-          <div class="text-center text-muted p-3">
-            No messages yet. Be the first to chat!
-          </div>
-        }
-      </div>
-
-      @if (errorMessage) {
-        <div class="alert alert-danger m-3 mb-0">
-          {{ errorMessage }}
-        </div>
-      }
-
-      <div class="chat-input">
-        <form [formGroup]="messageForm" (ngSubmit)="sendMessage()">
-          <div class="input-group">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="message"
-              placeholder="Type a message..."
-              maxlength="500">
-            <button
-              type="submit"
-              class="btn btn-primary"
-              [disabled]="messageForm.invalid || sending">
-              @if (sending) {
-                <span class="spinner-border spinner-border-sm"></span>
-              } @else {
-                Send
-              }
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  `,
-  styles: [`
-    .chat-container {
-      display: flex;
-      flex-direction: column;
-      height: 600px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      overflow: hidden;
-    }
-
-    .chat-header {
-      padding: 15px;
-      background: #f8f9fa;
-      border-bottom: 1px solid #ddd;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .chat-messages {
-      flex: 1;
-      overflow-y: auto;
-      padding: 15px;
-      background: #fff;
-    }
-
-    .chat-message {
-      margin-bottom: 10px;
-      padding: 8px;
-      border-radius: 4px;
-      background: #f8f9fa;
-    }
-
-    .username {
-      font-weight: bold;
-      color: #007bff;
-      margin-right: 5px;
-    }
-
-    .message {
-      color: #333;
-    }
-
-    .timestamp {
-      font-size: 0.75rem;
-      color: #999;
-      margin-left: 10px;
-    }
-
-    .chat-input {
-      padding: 15px;
-      border-top: 1px solid #ddd;
-      background: #f8f9fa;
-    }
-  `]
+  imports: [CommonModule, ReactiveFormsModule, AvatarModule, ButtonModule, InputTextModule, TagModule],
+  templateUrl: './chat.component.html',
+  styleUrls: ['./chat.component.scss']
 })
 export class ChatComponent implements OnInit, OnDestroy {
   @Input() streamId!: number;
+  @ViewChild('chatMessages') chatMessages?: ElementRef<HTMLDivElement>;
 
   messages: ChatMessage[] = [];
   messageForm: FormGroup;
@@ -182,12 +81,20 @@ export class ChatComponent implements OnInit, OnDestroy {
       });
   }
 
+  getUserInitial(username: string): string {
+    return username.charAt(0).toUpperCase();
+  }
+
+  isOwnMessage(message: ChatMessage): boolean {
+    return false;
+  }
+
   private scrollToBottom(): void {
     setTimeout(() => {
-      const chatMessages = document.querySelector('.chat-messages');
-      if (chatMessages) {
-        chatMessages.scrollTop = chatMessages.scrollHeight;
+      const container = this.chatMessages?.nativeElement;
+      if (container) {
+        container.scrollTop = container.scrollHeight;
       }
-    }, 100);
+    }, 80);
   }
 }
