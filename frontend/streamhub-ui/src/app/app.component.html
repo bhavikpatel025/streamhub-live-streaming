@@ -12,14 +12,22 @@
       <nav class="desktop-actions">
         <a class="app-link" routerLink="/streams">Browse</a>
 
-        @if (isAuthenticated()) {
+        <ng-container *ngIf="isAuthenticated(); else loginLinks">
           <a class="app-link" routerLink="/dashboard">Dashboard</a>
-          <span class="desktop-actions__identity">{{ getUsername() }}</span>
-          <button class="app-button app-button--secondary" type="button" (click)="logout()">Log out</button>
-        } @else {
+          <p-menu #menu [model]="menuItems" [popup]="true" styleClass="user-menu"></p-menu>
+          <app-user-avatar
+            [username]="getUsername()"
+            [profileImageUrl]="authService.currentUserValue?.profileImageUrl"
+            [size]="32"
+            (click)="menu.toggle($event)"
+            style="cursor: pointer;"
+          ></app-user-avatar>
+        </ng-container>
+
+        <ng-template #loginLinks>
           <a class="app-button app-button--secondary" routerLink="/login">Login</a>
           <a class="app-button" routerLink="/register">Create account</a>
-        }
+        </ng-template>
       </nav>
     </div>
   </header>
@@ -27,4 +35,8 @@
   <main class="app-shell__content">
     <router-outlet></router-outlet>
   </main>
+
+  <app-profile-settings
+    [(visible)]="profileSettingsVisible"
+  ></app-profile-settings>
 </div>

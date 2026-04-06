@@ -13,6 +13,7 @@ import { StreamService } from '../../../core/services/stream.service';
 import { Stream } from '../../../core/models/stream.model';
 import { ChatComponent } from '../../shared/chat/chat.component';
 import { VideoPlayerComponent } from '../../shared/video-player/video-player.component';
+import { UserAvatarComponent } from '../../shared/user-avatar/user-avatar.component';
 
 @Component({
   selector: 'app-stream-view',
@@ -25,7 +26,8 @@ import { VideoPlayerComponent } from '../../shared/video-player/video-player.com
     AvatarModule,
     ButtonModule,
     TagModule,
-    SkeletonModule
+    SkeletonModule,
+    UserAvatarComponent
   ],
   templateUrl: './stream-view.component.html',
   styleUrls: ['./stream-view.component.scss']

@@ -69,7 +69,7 @@
 
           <div class="stream-card__content">
             <div class="stream-card__identity">
-              <span class="stream-avatar">{{ getUserInitial(stream.username) }}</span>
+              <span class="stream-avatar"><app-user-avatar [username]="stream.username" [profileImageUrl]="stream.profileImageUrl" [size]="32"></app-user-avatar></span>
               <div>
                 <h3>{{ stream.title }}</h3>
                 <span>{{ stream.username }} - {{ getTimeAgo(stream.startedAt) }}</span>

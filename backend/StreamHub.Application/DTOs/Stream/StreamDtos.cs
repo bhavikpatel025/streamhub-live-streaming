@@ -11,6 +11,7 @@ public class StreamDto
     public int Id { get; set; }
     public int UserId { get; set; }
     public string Username { get; set; } = string.Empty;
+    public string? ProfileImageUrl { get; set; }
     public string Title { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public string StreamKey { get; set; } = string.Empty;
@@ -25,6 +26,7 @@ public class StreamListDto
 {
     public int Id { get; set; }
     public string Username { get; set; } = string.Empty;
+    public string? ProfileImageUrl { get; set; }
     public string Title { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public bool IsLive { get; set; }

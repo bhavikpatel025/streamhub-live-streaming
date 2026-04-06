@@ -26,7 +26,7 @@
 
             <div class="watch-meta__host">
               <div class="watch-meta__identity">
-                <p-avatar [label]="getUserInitial(stream.username)" shape="circle" size="large"></p-avatar>
+                <app-user-avatar [username]="stream.username" [profileImageUrl]="stream.profileImageUrl" [size]="48"></app-user-avatar>
                 <div>
                   <strong>{{ stream.username }}</strong>
                   <span>Streaming now</span>

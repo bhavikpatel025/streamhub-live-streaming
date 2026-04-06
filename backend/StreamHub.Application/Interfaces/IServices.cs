@@ -1,6 +1,8 @@
-﻿using StreamHub.Application.DTOs.Auth;
+﻿using Microsoft.AspNetCore.Http;
+using StreamHub.Application.DTOs.Auth;
 using StreamHub.Application.DTOs.Stream;
 using StreamHub.Application.DTOs.Chat;
+using StreamHub.Application.DTOs.User;
 
 namespace StreamHub.Application.Interfaces;
 
@@ -28,6 +30,13 @@ public interface IChatService
 {
     Task<ChatMessageDto> SendMessageAsync(int userId, SendMessageDto dto);
     Task<IEnumerable<ChatMessageDto>> GetStreamMessagesAsync(int streamId);
+}
+
+public interface IUserService
+{
+    Task<UserProfileDto?> GetUserByIdAsync(int userId);
+    Task<UploadProfilePictureResponseDto> UploadProfilePictureAsync(int userId, IFormFile file);
+    Task RemoveProfilePictureAsync(int userId);
 }
 
 public interface IJwtService

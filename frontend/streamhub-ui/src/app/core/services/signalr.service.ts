@@ -25,6 +25,16 @@ export class SignalRService {
 
   constructor(private authService: AuthService) {}
 
+  private normalizeImageUrl(message: ChatMessage): ChatMessage {
+    if (message.profileImageUrl && !message.profileImageUrl.startsWith('http')) {
+      return {
+        ...message,
+        profileImageUrl: `${environment.signalRUrl}${message.profileImageUrl}`
+      };
+    }
+    return message;
+  }
+
   startChatConnection(): Promise<void> {
     if (this.chatHubConnection) {
       return this.ensureConnected(this.chatHubConnection, 'chatStartPromise');
@@ -39,11 +49,11 @@ export class SignalRService {
       .build();
 
     this.chatHubConnection.on('ReceiveMessage', (message: ChatMessage) => {
-      this.chatMessage$.next(message);
+      this.chatMessage$.next(this.normalizeImageUrl(message));
     });
 
     this.chatHubConnection.on('LoadMessages', (messages: ChatMessage[]) => {
-      this.chatHistory$.next(messages);
+      this.chatHistory$.next(messages.map(m => this.normalizeImageUrl(m)));
     });
 
     this.chatHubConnection.on('Error', (message: string) => {

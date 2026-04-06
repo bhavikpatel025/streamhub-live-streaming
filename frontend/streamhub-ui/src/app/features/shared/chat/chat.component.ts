@@ -8,11 +8,12 @@ import { InputTextModule } from 'primeng/inputtext';
 import { TagModule } from 'primeng/tag';
 import { SignalRService } from '../../../core/services/signalr.service';
 import { ChatMessage } from '../../../core/models/chat.model';
+import { UserAvatarComponent } from '../user-avatar/user-avatar.component';
 
 @Component({
   selector: 'app-chat',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, AvatarModule, ButtonModule, InputTextModule, TagModule],
+  imports: [CommonModule, ReactiveFormsModule, AvatarModule, ButtonModule, InputTextModule, TagModule, UserAvatarComponent],
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.scss']
 })
@@ -83,6 +84,10 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   getUserInitial(username: string): string {
     return username.charAt(0).toUpperCase();
+  }
+
+  trackByMessageId(index: number, message: ChatMessage): number {
+    return message.id;
   }
 
   isOwnMessage(message: ChatMessage): boolean {

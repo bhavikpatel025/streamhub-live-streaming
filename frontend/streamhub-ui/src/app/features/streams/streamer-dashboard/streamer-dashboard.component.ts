@@ -16,6 +16,7 @@ import { ToolbarModule } from 'primeng/toolbar';
 import { SignalRService } from '../../../core/services/signalr.service';
 import { Stream, StreamKeyResponse } from '../../../core/models/stream.model';
 import { StreamService } from '../../../core/services/stream.service';
+import { UserAvatarComponent } from '../../shared/user-avatar/user-avatar.component';
 
 @Component({
   selector: 'app-streamer-dashboard',
@@ -33,7 +34,8 @@ import { StreamService } from '../../../core/services/stream.service';
     DialogModule,
     ConfirmDialogModule,
     AvatarModule,
-    ProgressSpinnerModule
+    ProgressSpinnerModule,
+    UserAvatarComponent
   ],
   templateUrl: './streamer-dashboard.component.html',
   styleUrls: ['./streamer-dashboard.component.scss']

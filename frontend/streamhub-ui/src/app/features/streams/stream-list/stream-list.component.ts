@@ -4,11 +4,12 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { StreamListItem } from '../../../core/models/stream.model';
 import { StreamService } from '../../../core/services/stream.service';
+import { UserAvatarComponent } from '../../shared/user-avatar/user-avatar.component';
 
 @Component({
   selector: 'app-stream-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, UserAvatarComponent],
   templateUrl: './stream-list.component.html',
   styleUrls: ['./stream-list.component.scss']
 })

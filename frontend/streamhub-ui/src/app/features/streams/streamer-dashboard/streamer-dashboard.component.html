@@ -171,7 +171,7 @@
           <tr>
             <td>
               <div class="table-stream">
-                <p-avatar [label]="getUserInitial(stream.username)" shape="circle"></p-avatar>
+                <app-user-avatar [username]="stream.username" [profileImageUrl]="stream.profileImageUrl" [size]="32"></app-user-avatar>
                 <div>
                   <strong>{{ stream.title }}</strong>
                   <span>{{ stream.description }}</span>

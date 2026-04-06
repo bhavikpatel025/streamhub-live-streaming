@@ -8,33 +8,35 @@
   </header>
 
   <div #chatMessages class="chat-shell__messages">
-    @if (messages.length === 0) {
+    <ng-container *ngIf="messages.length === 0; else messageList">
       <div class="chat-shell__empty">
         <i class="pi pi-comments"></i>
         <span>No messages yet. Start the conversation.</span>
       </div>
-    } @else {
-      @for (message of messages; track message.id) {
-        <div class="chat-bubble">
-          <p-avatar [label]="getUserInitial(message.username)" shape="circle" size="normal"></p-avatar>
-          <div class="chat-bubble__body">
-            <div class="chat-bubble__meta">
-              <strong>{{ message.username }}</strong>
-              <span>{{ message.sentAt | date: 'shortTime' }}</span>
-            </div>
-            <p>{{ message.message }}</p>
+    </ng-container>
+
+    <ng-template #messageList>
+      <div *ngFor="let message of messages; trackBy: trackByMessageId" class="chat-bubble">
+        <app-user-avatar 
+          [username]="message.username" 
+          [profileImageUrl]="message.profileImageUrl"
+          [size]="32">
+        </app-user-avatar>
+        <div class="chat-bubble__body">
+          <div class="chat-bubble__meta">
+            <strong>{{ message.username }}</strong>
+            <span>{{ message.sentAt | date: 'shortTime' }}</span>
           </div>
+          <p>{{ message.message }}</p>
         </div>
-      }
-    }
+      </div>
+    </ng-template>
   </div>
 
-  @if (errorMessage) {
-    <div class="chat-shell__error">
-      <i class="pi pi-exclamation-circle"></i>
-      <span>{{ errorMessage }}</span>
-    </div>
-  }
+  <div *ngIf="errorMessage" class="chat-shell__error">
+    <i class="pi pi-exclamation-circle"></i>
+    <span>{{ errorMessage }}</span>
+  </div>
 
   <form [formGroup]="messageForm" class="chat-shell__composer" (ngSubmit)="sendMessage()">
     <input

@@ -2,6 +2,7 @@ export interface Stream {
   id: number;
   userId: number;
   username: string;
+  profileImageUrl?: string;
   title: string;
   description: string;
   streamKey: string;
@@ -15,6 +16,7 @@ export interface Stream {
 export interface StreamListItem {
   id: number;
   username: string;
+  profileImageUrl?: string;
   title: string;
   description: string;
   isLive: boolean;
