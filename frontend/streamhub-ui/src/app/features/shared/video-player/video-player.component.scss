@@ -2,7 +2,7 @@
   overflow: hidden;
   border-radius: var(--app-radius-xl);
   border: 1px solid var(--app-border-color);
-  background: rgba(8, 14, 26, 0.94);
+  background: var(--app-card-bg-solid);
   box-shadow: var(--app-shadow-md);
 }
 
@@ -10,7 +10,7 @@
   position: relative;
   border-radius: 1.15rem;
   overflow: hidden;
-  background: #000;
+  background: var(--app-player-bg);
   aspect-ratio: 16 / 9;
 }
 
@@ -28,7 +28,7 @@
   display: inline-flex;
   padding: 0.45rem 0.75rem;
   border-radius: 999px;
-  background: rgba(8, 15, 29, 0.72);
+  background: var(--app-overlay-bg);
   backdrop-filter: blur(10px);
   font-size: 0.78rem;
 }
@@ -55,6 +55,6 @@
   margin-top: 1rem;
   padding: 0.9rem 1rem;
   border-radius: 1rem;
-  background: rgba(127, 29, 29, 0.38);
-  color: #fecaca;
+  background: var(--app-error-bg);
+  color: var(--app-error-color);
 }

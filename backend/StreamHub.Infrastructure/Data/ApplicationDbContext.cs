@@ -13,7 +13,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<User> Users { get; set; }
     public DbSet<Stream> Streams { get; set; }
     public DbSet<ChatMessage> ChatMessages { get; set; }
-    public DbSet<StreamLike> StreamLikes { get; set; }
+    public DbSet<StreamReaction> StreamReactions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -62,11 +62,12 @@ public class ApplicationDbContext : DbContext
                   .OnDelete(DeleteBehavior.NoAction);
         });
 
-        // StreamLike configuration
-        modelBuilder.Entity<StreamLike>(entity =>
+        // StreamReaction configuration
+        modelBuilder.Entity<StreamReaction>(entity =>
         {
             entity.HasKey(e => e.Id);
             entity.HasIndex(e => new { e.StreamId, e.UserId }).IsUnique();
+            entity.Property(e => e.ReactionType).IsRequired().HasMaxLength(15);
 
             entity.HasOne(e => e.Stream)
                   .WithMany()

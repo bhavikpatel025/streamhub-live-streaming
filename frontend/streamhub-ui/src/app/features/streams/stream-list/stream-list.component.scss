@@ -22,7 +22,7 @@
   overflow: hidden;
   border: 1px solid var(--app-border-color);
   border-radius: var(--app-radius-xl);
-  background: rgba(11, 18, 32, 0.88);
+  background: var(--app-card-bg-alt);
   box-shadow: var(--app-shadow-soft);
   transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
@@ -30,7 +30,7 @@
 .stream-card:hover {
   transform: translateY(-4px);
   border-color: rgba(255, 93, 93, 0.34);
-  box-shadow: 0 1.4rem 2.8rem rgba(15, 23, 42, 0.32);
+  box-shadow: var(--app-shadow-md);
 }
 
 .stream-card__thumbnail {
@@ -60,7 +60,7 @@
   gap: 0.4rem;
   padding: 0.45rem 0.7rem;
   border-radius: 999px;
-  background: rgba(8, 15, 29, 0.72);
+  background: var(--app-overlay-bg);
   backdrop-filter: blur(10px);
   font-size: 0.8rem;
 }
@@ -93,7 +93,7 @@
   display: inline-flex;
   padding: 0.5rem 0.75rem;
   border-radius: 999px;
-  background: rgba(8, 15, 29, 0.72);
+  background: var(--app-overlay-bg);
   backdrop-filter: blur(10px);
   font-weight: 700;
 }
@@ -118,7 +118,7 @@
   align-items: center;
   justify-content: center;
   border-radius: 999px;
-  background: rgba(59, 130, 246, 0.28);
+  background: rgba(59, 130, 246, 0.2);
   color: #fff;
   font-weight: 700;
 }
@@ -150,7 +150,7 @@
   display: inline-flex;
   padding: 0.45rem 0.75rem;
   border-radius: 999px;
-  background: rgba(148, 163, 184, 0.12);
+  background: var(--app-pill-bg);
   color: var(--app-text-soft);
   font-size: 0.8rem;
 }
@@ -169,7 +169,7 @@
 .stream-skeleton {
   height: 1rem;
   border-radius: 999px;
-  background: rgba(148, 163, 184, 0.2);
+  background: var(--app-input-bg);
 }
 
 .stream-skeleton--media {

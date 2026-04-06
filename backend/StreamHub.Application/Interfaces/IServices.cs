@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Http;
 using StreamHub.Application.DTOs.Auth;
 using StreamHub.Application.DTOs.Stream;
 using StreamHub.Application.DTOs.Chat;
-using StreamHub.Application.DTOs.StreamLike;
+
 using StreamHub.Application.DTOs.User;
 
 namespace StreamHub.Application.Interfaces;
@@ -45,8 +45,3 @@ public interface IJwtService
     string GenerateToken(int userId, string username, string email);
 }
 
-public interface IStreamLikeService
-{
-    Task<StreamLikeResponseDto> ToggleLikeAsync(int streamId, int userId);
-    Task<StreamLikeResponseDto> GetStreamLikesAsync(int streamId, int userId);
-}

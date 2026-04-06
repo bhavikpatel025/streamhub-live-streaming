@@ -26,6 +26,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   sending = false;
   errorMessage = '';
   private subscriptions: Subscription[] = [];
+  private isNearBottom = true;
 
   constructor(
     private fb: FormBuilder,
@@ -94,7 +95,19 @@ export class ChatComponent implements OnInit, OnDestroy {
     return false;
   }
 
+  onScroll(): void {
+    const container = this.chatMessages?.nativeElement;
+    if (container) {
+      const threshold = 100;
+      const position = container.scrollTop + container.offsetHeight;
+      const height = container.scrollHeight;
+      this.isNearBottom = position > height - threshold;
+    }
+  }
+
   private scrollToBottom(): void {
+    if (!this.isNearBottom) return;
+
     setTimeout(() => {
       const container = this.chatMessages?.nativeElement;
       if (container) {

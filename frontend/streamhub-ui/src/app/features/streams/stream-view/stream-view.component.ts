@@ -5,12 +5,11 @@ import { Subscription } from 'rxjs';
 import { MessageService } from 'primeng/api';
 import { AvatarModule } from 'primeng/avatar';
 import { ButtonModule } from 'primeng/button';
-import { CardModule } from 'primeng/card';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TagModule } from 'primeng/tag';
 import { SignalRService } from '../../../core/services/signalr.service';
 import { StreamService } from '../../../core/services/stream.service';
-import { StreamLikeService } from '../../../core/services/stream-like.service';
+import { StreamReactionService } from '../../../core/services/stream-reaction.service';
 import { Stream } from '../../../core/models/stream.model';
 import { ChatComponent } from '../../shared/chat/chat.component';
 import { VideoPlayerComponent } from '../../shared/video-player/video-player.component';
@@ -23,7 +22,6 @@ import { UserAvatarComponent } from '../../shared/user-avatar/user-avatar.compon
     CommonModule,
     VideoPlayerComponent,
     ChatComponent,
-    CardModule,
     AvatarModule,
     ButtonModule,
     TagModule,
@@ -38,8 +36,9 @@ export class StreamViewComponent implements OnInit, OnDestroy {
   loading = true;
   viewerCount = 0;
   likeCount = 0;
-  isLiked = false;
-  likeLoading = false;
+  dislikeCount = 0;
+  userReaction: 'LIKE' | 'DISLIKE' | 'NONE' = 'NONE';
+  reactionLoading = false;
   private subscriptions: Subscription[] = [];
 
   constructor(
@@ -47,14 +46,14 @@ export class StreamViewComponent implements OnInit, OnDestroy {
     private router: Router,
     private messageService: MessageService,
     private streamService: StreamService,
-    private streamLikeService: StreamLikeService,
+    private streamReactionService: StreamReactionService,
     private signalRService: SignalRService
   ) {}
 
   ngOnInit(): void {
     const streamId = Number(this.route.snapshot.paramMap.get('id'));
     this.loadStream(streamId);
-    this.loadLikes(streamId);
+    this.loadReactions(streamId);
     void this.setupSignalR(streamId);
   }
 
@@ -89,35 +88,35 @@ export class StreamViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  private loadLikes(streamId: number): void {
-    this.streamLikeService.getLikes(streamId).subscribe({
+  private loadReactions(streamId: number): void {
+    this.streamReactionService.getReactions(streamId).subscribe({
       next: (result) => {
-        this.likeCount = result.totalLikes;
-        this.isLiked = result.isLikedByCurrentUser;
+        this.likeCount = result.likes;
+        this.dislikeCount = result.dislikes;
+        this.userReaction = result.userReaction;
       },
       error: (error) => {
-        console.error('Failed to load likes:', error);
+        console.error('Failed to load reactions:', error);
       }
     });
   }
 
-  toggleLike(): void {
-    if (!this.stream || this.likeLoading) return;
+  toggleReaction(reactionType: 'LIKE' | 'DISLIKE'): void {
+    if (!this.stream || this.reactionLoading) return;
 
-    this.likeLoading = true;
-    this.streamLikeService.toggleLike(this.stream.id).subscribe({
+    this.reactionLoading = true;
+    this.streamReactionService.toggleReaction(this.stream.id, reactionType).subscribe({
       next: (result) => {
-        this.likeCount = result.totalLikes;
-        this.isLiked = result.isLikedByCurrentUser;
-        this.likeLoading = false;
+        this.userReaction = result.userReaction;
+        this.reactionLoading = false;
       },
       error: (error) => {
-        console.error('Failed to toggle like:', error);
-        this.likeLoading = false;
+        console.error('Failed to toggle reaction:', error);
+        this.reactionLoading = false;
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'Could not update like.'
+          detail: 'Could not update reaction.'
         });
       }
     });
@@ -137,6 +136,11 @@ export class StreamViewComponent implements OnInit, OnDestroy {
         this.signalRService.likeCount$.subscribe((count) => {
           if (count > 0 || this.likeCount > 0) {
             this.likeCount = count;
+          }
+        }),
+        this.signalRService.dislikeCount$.subscribe((count) => {
+          if (count > 0 || this.dislikeCount > 0) {
+            this.dislikeCount = count;
           }
         }),
         this.signalRService.streamEnded$.subscribe((endedStreamId) => {

@@ -13,49 +13,58 @@
       <div class="watch-layout__main">
         <app-video-player [streamKey]="stream.streamKey"></app-video-player>
 
-        <p-card styleClass="watch-meta-card">
-          <div class="watch-meta">
-            <div class="watch-meta__title">
-              <div class="watch-meta__status">
-                <p-tag value="LIVE" severity="danger"></p-tag>
-                <span>{{ viewerCount }} watching now</span>
-              </div>
-              <h1>{{ stream.title }}</h1>
-              <p>{{ stream.description }}</p>
-            </div>
-
-            <div class="watch-meta__host">
-              <div class="watch-meta__identity">
-                <app-user-avatar [username]="stream.username" [profileImageUrl]="stream.profileImageUrl" [size]="48"></app-user-avatar>
-                <div>
-                  <strong>{{ stream.username }}</strong>
-                  <span>Streaming now</span>
-                </div>
-              </div>
-
-              <div class="watch-meta__actions">
-                <button
-                  class="like-button"
-                  [class.like-button--active]="isLiked"
-                  [disabled]="likeLoading"
-                  (click)="toggleLike()"
-                  id="like-toggle-btn"
-                >
-                  <i class="pi" [ngClass]="isLiked ? 'pi-thumbs-up-fill' : 'pi-thumbs-up'"></i>
-                  <span class="like-button__count">{{ likeCount }}</span>
-                  <span class="like-button__label">{{ isLiked ? 'Liked' : 'Like' }}</span>
-                </button>
-
-                <p-button
-                  label="Back to browse"
-                  icon="pi pi-arrow-left"
-                  severity="secondary"
-                  (onClick)="goBack()">
-                </p-button>
-              </div>
+        <div class="watch-info">
+          <div class="watch-info__top">
+            <div class="watch-info__status">
+              <p-tag value="LIVE" severity="danger"></p-tag>
+              <span class="watch-info__viewers">{{ viewerCount }} watching now</span>
             </div>
           </div>
-        </p-card>
+
+          <h2 class="watch-info__title">{{ stream.title }}</h2>
+          <p class="watch-info__desc">{{ stream.description }}</p>
+
+          <div class="watch-info__bar">
+            <div class="watch-info__identity">
+              <app-user-avatar [username]="stream.username" [profileImageUrl]="stream.profileImageUrl" [size]="36"></app-user-avatar>
+              <strong class="watch-info__username">{{ stream.username }}</strong>
+            </div>
+
+            <div class="watch-info__actions">
+              <div class="reaction-group" id="like-dislike-group">
+                <button
+                  class="reaction-btn reaction-btn--like"
+                  [class.reaction-btn--active]="userReaction === 'LIKE'"
+                  [disabled]="reactionLoading"
+                  (click)="toggleReaction('LIKE')"
+                  id="like-toggle-btn"
+                >
+                  <i class="pi" [ngClass]="userReaction === 'LIKE' ? 'pi-thumbs-up-fill' : 'pi-thumbs-up'"></i>
+                  <span class="reaction-btn__count">{{ likeCount }}</span>
+                </button>
+                <span class="reaction-divider"></span>
+                <button
+                  class="reaction-btn reaction-btn--dislike"
+                  [class.reaction-btn--active]="userReaction === 'DISLIKE'"
+                  [disabled]="reactionLoading"
+                  (click)="toggleReaction('DISLIKE')"
+                  id="dislike-btn"
+                >
+                  <i class="pi" [ngClass]="userReaction === 'DISLIKE' ? 'pi-thumbs-down-fill' : 'pi-thumbs-down'"></i>
+                  <span class="reaction-btn__count">{{ dislikeCount }}</span>
+                </button>
+              </div>
+
+              <p-button
+                label="Back to browse"
+                icon="pi pi-arrow-left"
+                severity="secondary"
+                [rounded]="true"
+                (onClick)="goBack()">
+              </p-button>
+            </div>
+          </div>
+        </div>
       </div>
 
       <aside class="watch-layout__chat">

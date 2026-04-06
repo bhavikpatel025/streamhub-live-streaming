@@ -7,7 +7,7 @@
     <p-tag [value]="messages.length + ' messages'" severity="contrast"></p-tag>
   </header>
 
-  <div #chatMessages class="chat-shell__messages">
+  <div #chatMessages class="chat-shell__messages" (scroll)="onScroll()">
     <ng-container *ngIf="messages.length === 0; else messageList">
       <div class="chat-shell__empty">
         <i class="pi pi-comments"></i>
@@ -20,14 +20,11 @@
         <app-user-avatar 
           [username]="message.username" 
           [profileImageUrl]="message.profileImageUrl"
-          [size]="32">
+          [size]="24">
         </app-user-avatar>
-        <div class="chat-bubble__body">
-          <div class="chat-bubble__meta">
-            <strong>{{ message.username }}</strong>
-            <span>{{ message.sentAt | date: 'shortTime' }}</span>
-          </div>
-          <p>{{ message.message }}</p>
+        <div class="chat-bubble__content">
+          <span class="chat-bubble__username">{{ '@' + message.username }}</span>
+          <span class="chat-bubble__text">{{ message.message }}</span>
         </div>
       </div>
     </ng-template>
