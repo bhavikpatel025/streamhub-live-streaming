@@ -12,6 +12,15 @@
       <nav class="desktop-actions">
         <a class="app-link" routerLink="/streams">Browse</a>
 
+        <button
+          class="theme-toggle"
+          (click)="toggleTheme()"
+          [attr.aria-label]="themeService.isDark ? 'Switch to light mode' : 'Switch to dark mode'"
+          id="theme-toggle-btn"
+        >
+          <i class="pi" [ngClass]="themeService.isDark ? 'pi-moon' : 'pi-sun'"></i>
+        </button>
+
         <ng-container *ngIf="isAuthenticated(); else loginLinks">
           <a class="app-link" routerLink="/dashboard">Dashboard</a>
           <p-menu #menu [model]="menuItems" [popup]="true" styleClass="user-menu"></p-menu>

@@ -33,12 +33,26 @@
                 </div>
               </div>
 
-              <p-button
-                label="Back to browse"
-                icon="pi pi-arrow-left"
-                severity="secondary"
-                (onClick)="goBack()">
-              </p-button>
+              <div class="watch-meta__actions">
+                <button
+                  class="like-button"
+                  [class.like-button--active]="isLiked"
+                  [disabled]="likeLoading"
+                  (click)="toggleLike()"
+                  id="like-toggle-btn"
+                >
+                  <i class="pi" [ngClass]="isLiked ? 'pi-thumbs-up-fill' : 'pi-thumbs-up'"></i>
+                  <span class="like-button__count">{{ likeCount }}</span>
+                  <span class="like-button__label">{{ isLiked ? 'Liked' : 'Like' }}</span>
+                </button>
+
+                <p-button
+                  label="Back to browse"
+                  icon="pi pi-arrow-left"
+                  severity="secondary"
+                  (onClick)="goBack()">
+                </p-button>
+              </div>
             </div>
           </div>
         </p-card>

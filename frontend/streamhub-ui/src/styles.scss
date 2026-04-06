@@ -30,6 +30,28 @@
   --app-font-family: 'Manrope', 'Segoe UI', sans-serif;
 }
 
+body.light-theme {
+  color-scheme: light;
+  --app-bg: #f4f6fb;
+  --app-surface: rgba(255, 255, 255, 0.92);
+  --app-surface-strong: #ffffff;
+  --app-surface-soft: rgba(241, 245, 249, 0.95);
+  --app-border-color: rgba(100, 116, 139, 0.18);
+  --app-border-strong: rgba(100, 116, 139, 0.28);
+  --app-text-color: #1e293b;
+  --app-text-soft: #334155;
+  --app-text-muted: #64748b;
+  --app-heading-color: #0f172a;
+  --app-accent: #ef4444;
+  --app-accent-strong: #ea580c;
+  --app-accent-soft: rgba(239, 68, 68, 0.1);
+  --app-highlight: #2563eb;
+  --app-success: #059669;
+  --app-warning: #d97706;
+  --app-shadow-md: 0 1.5rem 3rem rgba(100, 116, 139, 0.12);
+  --app-shadow-soft: 0 1rem 2rem rgba(100, 116, 139, 0.08);
+}
+
 :root,
 .app-dark-theme {
   --p-primary-color: var(--app-accent);
@@ -47,6 +69,24 @@
   --p-text-muted-color: var(--app-text-muted);
   --p-border-radius: 1rem;
   --p-focus-ring-color: rgba(59, 130, 246, 0.45);
+}
+
+body.light-theme .app-light-theme {
+  --p-primary-color: var(--app-accent);
+  --p-primary-contrast-color: #ffffff;
+  --p-content-border-color: var(--app-border-color);
+  --p-content-background: rgba(255, 255, 255, 0.85);
+  --p-surface-0: #ffffff;
+  --p-surface-50: #f8fafc;
+  --p-surface-100: #f1f5f9;
+  --p-surface-200: #e2e8f0;
+  --p-surface-300: #cbd5e1;
+  --p-surface-700: #334155;
+  --p-surface-900: #0f172a;
+  --p-text-color: var(--app-text-color);
+  --p-text-muted-color: var(--app-text-muted);
+  --p-border-radius: 1rem;
+  --p-focus-ring-color: rgba(37, 99, 235, 0.35);
 }
 
 *,
@@ -76,6 +116,13 @@ body {
   color: var(--app-text-color);
   font-family: var(--app-font-family);
   letter-spacing: -0.01em;
+}
+
+body.light-theme {
+  background:
+    radial-gradient(circle at top left, rgba(59, 130, 246, 0.08), transparent 28%),
+    radial-gradient(circle at top right, rgba(249, 115, 22, 0.06), transparent 24%),
+    linear-gradient(180deg, #f4f6fb 0%, #e8ecf4 100%);
 }
 
 a {

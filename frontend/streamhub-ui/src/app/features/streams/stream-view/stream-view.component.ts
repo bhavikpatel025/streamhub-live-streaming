@@ -10,6 +10,7 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { TagModule } from 'primeng/tag';
 import { SignalRService } from '../../../core/services/signalr.service';
 import { StreamService } from '../../../core/services/stream.service';
+import { StreamLikeService } from '../../../core/services/stream-like.service';
 import { Stream } from '../../../core/models/stream.model';
 import { ChatComponent } from '../../shared/chat/chat.component';
 import { VideoPlayerComponent } from '../../shared/video-player/video-player.component';
@@ -36,6 +37,9 @@ export class StreamViewComponent implements OnInit, OnDestroy {
   stream?: Stream;
   loading = true;
   viewerCount = 0;
+  likeCount = 0;
+  isLiked = false;
+  likeLoading = false;
   private subscriptions: Subscription[] = [];
 
   constructor(
@@ -43,12 +47,14 @@ export class StreamViewComponent implements OnInit, OnDestroy {
     private router: Router,
     private messageService: MessageService,
     private streamService: StreamService,
+    private streamLikeService: StreamLikeService,
     private signalRService: SignalRService
   ) {}
 
   ngOnInit(): void {
     const streamId = Number(this.route.snapshot.paramMap.get('id'));
     this.loadStream(streamId);
+    this.loadLikes(streamId);
     void this.setupSignalR(streamId);
   }
 
@@ -83,6 +89,40 @@ export class StreamViewComponent implements OnInit, OnDestroy {
     });
   }
 
+  private loadLikes(streamId: number): void {
+    this.streamLikeService.getLikes(streamId).subscribe({
+      next: (result) => {
+        this.likeCount = result.totalLikes;
+        this.isLiked = result.isLikedByCurrentUser;
+      },
+      error: (error) => {
+        console.error('Failed to load likes:', error);
+      }
+    });
+  }
+
+  toggleLike(): void {
+    if (!this.stream || this.likeLoading) return;
+
+    this.likeLoading = true;
+    this.streamLikeService.toggleLike(this.stream.id).subscribe({
+      next: (result) => {
+        this.likeCount = result.totalLikes;
+        this.isLiked = result.isLikedByCurrentUser;
+        this.likeLoading = false;
+      },
+      error: (error) => {
+        console.error('Failed to toggle like:', error);
+        this.likeLoading = false;
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Could not update like.'
+        });
+      }
+    });
+  }
+
   private async setupSignalR(streamId: number): Promise<void> {
     try {
       await this.signalRService.startStreamConnection();
@@ -93,6 +133,11 @@ export class StreamViewComponent implements OnInit, OnDestroy {
       this.subscriptions.push(
         this.signalRService.viewerCount$.subscribe((count) => {
           this.viewerCount = count;
+        }),
+        this.signalRService.likeCount$.subscribe((count) => {
+          if (count > 0 || this.likeCount > 0) {
+            this.likeCount = count;
+          }
         }),
         this.signalRService.streamEnded$.subscribe((endedStreamId) => {
           if (endedStreamId === streamId) {

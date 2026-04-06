@@ -6,6 +6,7 @@ import { ButtonModule } from 'primeng/button';
 import { MenuModule } from 'primeng/menu';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { AuthService } from './core/services/auth.service';
+import { ThemeService } from './core/services/theme.service';
 import { UserAvatarComponent } from './features/shared/user-avatar/user-avatar.component';
 import { ProfileSettingsComponent } from './features/shared/profile-settings/profile-settings.component';
 
@@ -13,7 +14,8 @@ import { ProfileSettingsComponent } from './features/shared/profile-settings/pro
   selector: 'app-root',
   standalone: true,
   host: {
-    class: 'app-dark-theme'
+    '[class.app-dark-theme]': 'themeService.isDark',
+    '[class.app-light-theme]': '!themeService.isDark'
   },
   imports: [
     CommonModule,
@@ -48,8 +50,11 @@ export class AppComponent {
 
   constructor(
     public authService: AuthService,
+    public themeService: ThemeService,
     private router: Router
-  ) {}
+  ) {
+    this.themeService.initializeTheme();
+  }
 
   isAuthenticated(): boolean {
     return this.authService.isAuthenticated;
@@ -65,6 +70,10 @@ export class AppComponent {
 
   openProfileSettings(): void {
     this.profileSettingsVisible = true;
+  }
+
+  toggleTheme(): void {
+    this.themeService.toggleTheme();
   }
 
   logout(): void {
