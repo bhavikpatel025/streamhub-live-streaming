@@ -1,0 +1,88 @@
+<section class="auth-page app-page">
+  <div class="auth-grid">
+    <div class="auth-copy glass-surface">
+      <span class="page-heading__eyebrow">Go live with confidence</span>
+      <h1>Welcome back to a streaming workspace built for creators.</h1>
+      <p>
+        Launch broadcasts, manage stream keys, and stay connected with your audience through real-time chat and viewer analytics.
+      </p>
+
+      <div class="auth-copy__highlights">
+        <div>
+          <i class="pi pi-wave-pulse"></i>
+          <span>Low-friction live workflow from OBS to HLS playback</span>
+        </div>
+        <div>
+          <i class="pi pi-users"></i>
+          <span>Real-time chat and viewer presence powered by SignalR</span>
+        </div>
+        <div>
+          <i class="pi pi-chart-line"></i>
+          <span>Professional creator dashboard for every stream session</span>
+        </div>
+      </div>
+    </div>
+
+    <p-card styleClass="auth-card">
+      <ng-template pTemplate="header">
+        <div class="auth-card__header">
+          <span class="auth-card__badge">StreamHub</span>
+          <h2>Sign in</h2>
+          <p>Enter your credentials to access your dashboard and streams.</p>
+        </div>
+      </ng-template>
+
+      @if (errorMessage) {
+        <p-message severity="error" [text]="errorMessage"></p-message>
+      }
+
+      <form [formGroup]="loginForm" class="auth-form" (ngSubmit)="onSubmit()">
+        <div class="auth-form__field">
+          <label for="email">Email</label>
+          <input
+            id="email"
+            pInputText
+            type="email"
+            formControlName="email"
+            placeholder="creator@streamhub.app">
+          @if (hasError('email', 'required')) {
+            <small>Email is required.</small>
+          }
+          @if (hasError('email', 'email')) {
+            <small>Enter a valid email address.</small>
+          }
+        </div>
+
+        <div class="auth-form__field">
+          <label for="password">Password</label>
+          <p-password
+            inputId="password"
+            formControlName="password"
+            [toggleMask]="true"
+            [feedback]="false"
+            placeholder="Enter your password"
+            styleClass="w-full">
+          </p-password>
+          @if (hasError('password', 'required')) {
+            <small>Password is required.</small>
+          }
+        </div>
+
+        <p-button
+          type="submit"
+          label="Login"
+          icon="pi pi-sign-in"
+          [loading]="loading"
+          [fluid]="true">
+        </p-button>
+      </form>
+
+      <ng-template pTemplate="footer">
+        <p class="auth-card__footer">
+          New to StreamHub?
+          <a routerLink="/register">Create your account</a>
+        </p>
+      </ng-template>
+    </p-card>
+  </div>
+</section>

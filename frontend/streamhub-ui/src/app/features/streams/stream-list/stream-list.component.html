@@ -1,1 +1,90 @@
-<p>stream-list works!</p>
+<section class="app-page">
+  <div class="page-hero page-section">
+    <div class="page-heading">
+      <span class="page-heading__eyebrow">Discover live now</span>
+      <h1 class="page-heading__title">Streaming experiences that feel curated, live, and ready to join.</h1>
+      <p class="page-heading__description">
+        Browse active broadcasts, jump straight into chat, and monitor who is trending across the platform in real time.
+      </p>
+
+      <div class="section-actions">
+        @if (isAuthenticated()) {
+          <button class="hero-button" type="button" (click)="navigateToDashboard()">Open creator dashboard</button>
+        } @else {
+          <button class="hero-button" type="button" (click)="login()">Login to join streams</button>
+        }
+
+        <button class="pill-link" type="button" (click)="loadStreams()">Refresh now</button>
+      </div>
+    </div>
+
+    <div class="metric-grid">
+      <div class="metric-card">
+        <span class="metric-card__label">Live channels</span>
+        <strong class="metric-card__value">{{ streams.length }}</strong>
+      </div>
+      <div class="metric-card">
+        <span class="metric-card__label">Active viewers</span>
+        <strong class="metric-card__value">{{ totalViewers }}</strong>
+      </div>
+      <div class="metric-card">
+        <span class="metric-card__label">Refresh cadence</span>
+        <strong class="metric-card__value">30s</strong>
+      </div>
+    </div>
+  </div>
+
+  @if (loading) {
+    <div class="stream-grid">
+      @for (item of [1, 2, 3, 4, 5, 6]; track item) {
+        <article class="stream-card stream-card--loading">
+          <div class="stream-card__thumbnail">
+            <div class="stream-skeleton stream-skeleton--media"></div>
+          </div>
+          <div class="stream-card__content">
+            <div class="stream-skeleton stream-skeleton--title"></div>
+            <div class="stream-skeleton"></div>
+            <div class="stream-skeleton stream-skeleton--short"></div>
+          </div>
+        </article>
+      }
+    </div>
+  } @else if (streams.length === 0) {
+    <div class="empty-state">
+      <h3>No live streams right now</h3>
+      <p>The stage is clear for the next creator to go live.</p>
+    </div>
+  } @else {
+    <div class="stream-grid">
+      @for (stream of streams; track stream.id) {
+        <article class="stream-card" (click)="watchStream(stream.id)">
+          <div class="stream-card__thumbnail">
+            <div class="stream-card__overlay">
+              <span class="live-badge">LIVE</span>
+              <span class="stream-card__viewers">{{ getViewerLabel(stream.viewerCount) }}</span>
+            </div>
+            <div class="stream-card__glow"></div>
+            <span class="stream-card__channel">{{ stream.username }}</span>
+          </div>
+
+          <div class="stream-card__content">
+            <div class="stream-card__identity">
+              <span class="stream-avatar"><app-user-avatar [username]="stream.username" [profileImageUrl]="stream.profileImageUrl" [size]="32"></app-user-avatar></span>
+              <div>
+                <h3>{{ stream.title }}</h3>
+                <span>{{ stream.username }} - {{ getTimeAgo(stream.startedAt) }}</span>
+              </div>
+            </div>
+
+            <p>{{ stream.description || 'Live stream description coming soon.' }}</p>
+
+            <div class="stream-card__footer">
+              <span class="stream-card__category">Live Session</span>
+              <button class="stream-card__action" type="button">Watch now</button>
+            </div>
+          </div>
+        </article>
+      }
+    </div>
+  }
+</section>

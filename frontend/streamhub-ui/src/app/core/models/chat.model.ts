@@ -3,6 +3,7 @@ export interface ChatMessage {
   streamId: number;
   userId: number;
   username: string;
+  profileImageUrl?: string;
   message: string;
   sentAt: Date;
 }

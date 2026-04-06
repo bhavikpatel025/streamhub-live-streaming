@@ -1,1 +1,32 @@
-<p>video-player works!</p>
+<p-card styleClass="player-card">
+  <div class="player-shell">
+    <div class="player-shell__overlay">
+      <p-tag value="LIVE" severity="danger"></p-tag>
+      <span class="player-shell__quality">HLS Playback</span>
+    </div>
+
+    <video
+      #videoElement
+      class="player-shell__video"
+      controls
+      autoplay
+      playsinline
+      crossorigin="anonymous"
+      [poster]="posterUrl">
+      Your browser does not support the video tag.
+    </video>
+
+    @if (loading) {
+      <div class="player-shell__loading">
+        <p-progressSpinner ariaLabel="Loading stream"></p-progressSpinner>
+      </div>
+    }
+  </div>
+
+  @if (errorMessage) {
+    <div class="player-shell__error">
+      <i class="pi pi-exclamation-triangle"></i>
+      <span>{{ errorMessage }}</span>
+    </div>
+  }
+</p-card>

@@ -1,1 +1,100 @@
-<p>register works!</p>
+<section class="auth-page app-page">
+  <div class="auth-grid">
+    <div class="auth-copy glass-surface">
+      <span class="page-heading__eyebrow">Build your creator workspace</span>
+      <h1>Create an account and turn StreamHub into your live control room.</h1>
+      <p>
+        Set up streams in seconds, generate secure stream keys, and manage your audience with a polished, production-ready dashboard.
+      </p>
+
+      <div class="auth-copy__stats">
+        <div>
+          <strong>OBS ready</strong>
+          <span>RTMP ingest, HLS playback, and live chat already wired.</span>
+        </div>
+        <div>
+          <strong>Responsive UI</strong>
+          <span>Creator tools designed for desktop control and mobile monitoring.</span>
+        </div>
+      </div>
+    </div>
+
+    <p-card styleClass="auth-card">
+      <ng-template pTemplate="header">
+        <div class="auth-card__header">
+          <span class="auth-card__badge">Start streaming</span>
+          <h2>Create account</h2>
+          <p>Reserve your creator identity and set up your first stream.</p>
+        </div>
+      </ng-template>
+
+      @if (errorMessage) {
+        <p-message severity="error" [text]="errorMessage"></p-message>
+      }
+
+      <form [formGroup]="registerForm" class="auth-form" (ngSubmit)="onSubmit()">
+        <div class="auth-form__field">
+          <label for="username">Username</label>
+          <input
+            id="username"
+            pInputText
+            type="text"
+            formControlName="username"
+            placeholder="Choose your creator name">
+          @if (hasError('username', 'required')) {
+            <small>Username is required.</small>
+          }
+        </div>
+
+        <div class="auth-form__field">
+          <label for="email">Email</label>
+          <input
+            id="email"
+            pInputText
+            type="email"
+            formControlName="email"
+            placeholder="you@streamhub.app">
+          @if (hasError('email', 'required')) {
+            <small>Email is required.</small>
+          }
+          @if (hasError('email', 'email')) {
+            <small>Enter a valid email address.</small>
+          }
+        </div>
+
+        <div class="auth-form__field">
+          <label for="password">Password</label>
+          <p-password
+            inputId="password"
+            formControlName="password"
+            [toggleMask]="true"
+            [feedback]="false"
+            placeholder="At least 6 characters"
+            styleClass="w-full">
+          </p-password>
+          @if (hasError('password', 'required')) {
+            <small>Password is required.</small>
+          }
+          @if (hasError('password', 'minlength')) {
+            <small>Password must be at least 6 characters.</small>
+          }
+        </div>
+
+        <p-button
+          type="submit"
+          label="Create account"
+          icon="pi pi-user-plus"
+          [loading]="loading"
+          [fluid]="true">
+        </p-button>
+      </form>
+
+      <ng-template pTemplate="footer">
+        <p class="auth-card__footer">
+          Already have an account?
+          <a routerLink="/login">Sign in</a>
+        </p>
+      </ng-template>
+    </p-card>
+  </div>
+</section>

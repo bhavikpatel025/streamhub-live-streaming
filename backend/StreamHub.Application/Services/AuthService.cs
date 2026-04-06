@@ -52,6 +52,7 @@ public class AuthService : IAuthService
             UserId = createdUser.Id,
             Username = createdUser.Username,
             Email = createdUser.Email,
+            ProfileImageUrl = createdUser.ProfileImageUrl,
             Token = token
         };
     }
@@ -79,6 +80,7 @@ public class AuthService : IAuthService
             UserId = user.Id,
             Username = user.Username,
             Email = user.Email,
+            ProfileImageUrl = user.ProfileImageUrl,
             Token = token
         };
     }

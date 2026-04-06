@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using StreamHub.Domain.Entities;
 using Stream = StreamHub.Domain.Entities.Stream;
 
@@ -13,6 +13,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<User> Users { get; set; }
     public DbSet<Stream> Streams { get; set; }
     public DbSet<ChatMessage> ChatMessages { get; set; }
+    public DbSet<StreamReaction> StreamReactions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -57,6 +58,24 @@ public class ApplicationDbContext : DbContext
 
             entity.HasOne(e => e.User)
                   .WithMany(u => u.ChatMessages)
+                  .HasForeignKey(e => e.UserId)
+                  .OnDelete(DeleteBehavior.NoAction);
+        });
+
+        // StreamReaction configuration
+        modelBuilder.Entity<StreamReaction>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => new { e.StreamId, e.UserId }).IsUnique();
+            entity.Property(e => e.ReactionType).IsRequired().HasMaxLength(15);
+
+            entity.HasOne(e => e.Stream)
+                  .WithMany()
+                  .HasForeignKey(e => e.StreamId)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.User)
+                  .WithMany()
                   .HasForeignKey(e => e.UserId)
                   .OnDelete(DeleteBehavior.NoAction);
         });

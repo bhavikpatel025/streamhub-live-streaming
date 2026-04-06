@@ -1,0 +1,131 @@
+.auth-page {
+  min-height: calc(100vh - 8rem);
+  display: flex;
+  align-items: center;
+}
+
+.auth-grid {
+  width: 100%;
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: minmax(0, 1.1fr) minmax(360px, 0.9fr);
+  align-items: stretch;
+}
+
+.auth-copy {
+  padding: 2rem;
+}
+
+.auth-copy h1 {
+  margin: 0.75rem 0 1rem;
+  font-size: clamp(2.2rem, 5vw, 4rem);
+  line-height: 0.96;
+}
+
+.auth-copy p {
+  margin: 0;
+  color: var(--app-text-soft);
+  line-height: 1.75;
+  max-width: 34rem;
+}
+
+.auth-copy__highlights {
+  margin-top: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.auth-copy__highlights div {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.95rem 1rem;
+  border-radius: 1rem;
+  background: var(--app-input-bg);
+  color: var(--app-text-soft);
+}
+
+.auth-copy__highlights i {
+  color: var(--app-accent);
+}
+
+:host ::ng-deep .auth-card {
+  border-radius: var(--app-radius-xl);
+  border: 1px solid var(--app-border-color);
+  background: var(--app-card-bg-solid);
+  box-shadow: var(--app-shadow-md);
+}
+
+.auth-card__header {
+  padding-bottom: 1rem;
+}
+
+.auth-card__badge {
+  display: inline-flex;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(255, 93, 93, 0.16);
+  color: var(--app-accent);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.auth-card__header h2 {
+  margin: 1rem 0 0.5rem;
+  font-size: 2rem;
+}
+
+.auth-card__header p,
+.auth-card__footer {
+  color: var(--app-text-muted);
+}
+
+.auth-card__footer {
+  margin: 0;
+}
+
+.auth-card__footer a {
+  color: var(--app-text-color);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  margin-top: 1.5rem;
+}
+
+.auth-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.auth-form__field label {
+  font-size: 0.92rem;
+  color: var(--app-text-soft);
+}
+
+.auth-form__field small {
+  color: var(--app-error-color);
+}
+
+.auth-form__field input,
+:host ::ng-deep .auth-form__field .p-password-input {
+  width: 100%;
+}
+
+@media (max-width: 960px) {
+  .auth-page {
+    min-height: auto;
+  }
+
+  .auth-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,80 +1,83 @@
-import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterOutlet, RouterLink } from '@angular/router';
+import { Component } from '@angular/core';
+import { Router, RouterLink, RouterOutlet } from '@angular/router';
+import { MenuItem } from 'primeng/api';
+import { ButtonModule } from 'primeng/button';
+import { MenuModule } from 'primeng/menu';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { AuthService } from './core/services/auth.service';
+import { ThemeService } from './core/services/theme.service';
+import { UserAvatarComponent } from './features/shared/user-avatar/user-avatar.component';
+import { ProfileSettingsComponent } from './features/shared/profile-settings/profile-settings.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterLink],
-  template: `
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-      <div class="container">
-        <a class="navbar-brand" routerLink="/">
-          <i class="bi bi-broadcast"></i> StreamHub
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav me-auto">
-            <li class="nav-item">
-              <a class="nav-link" routerLink="/streams" routerLinkActive="active">Browse Streams</a>
-            </li>
-            @if (isAuthenticated()) {
-              <li class="nav-item">
-                <a class="nav-link" routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
-              </li>
-            }
-          </ul>
-          <ul class="navbar-nav">
-            @if (isAuthenticated()) {
-              <li class="nav-item">
-                <span class="navbar-text me-3">
-                  {{ getUsername() }}
-                </span>
-              </li>
-              <li class="nav-item">
-                <button class="btn btn-outline-light" (click)="logout()">Logout</button>
-              </li>
-            } @else {
-              <li class="nav-item">
-                <a class="nav-link" routerLink="/login">Login</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" routerLink="/register">Register</a>
-              </li>
-            }
-          </ul>
-        </div>
-      </div>
-    </nav>
-
-    <router-outlet />
-  `,
-  styles: [`
-    .navbar-brand {
-      font-size: 1.5rem;
-      font-weight: bold;
-    }
-  `]
+  host: {
+    '[class.app-dark-theme]': 'themeService.isDark',
+    '[class.app-light-theme]': '!themeService.isDark'
+  },
+  imports: [
+    CommonModule,
+    RouterOutlet,
+    RouterLink,
+    ButtonModule,
+    MenuModule,
+    OverlayPanelModule,
+    UserAvatarComponent,
+    ProfileSettingsComponent
+  ],
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
+  profileSettingsVisible = false;
+  menuItems: MenuItem[] = [
+    {
+      label: 'Profile Settings',
+      icon: 'pi pi-cog',
+      command: () => this.openProfileSettings()
+    },
+    {
+      separator: true
+    },
+    {
+      label: 'Logout',
+      icon: 'pi pi-sign-out',
+      command: () => this.logout()
+    }
+  ];
+
   constructor(
-    private authService: AuthService,
+    public authService: AuthService,
+    public themeService: ThemeService,
     private router: Router
-  ) {}
+  ) {
+    this.themeService.initializeTheme();
+  }
 
   isAuthenticated(): boolean {
     return this.authService.isAuthenticated;
   }
 
   getUsername(): string {
-    return this.authService.currentUserValue?.username || '';
+    return this.authService.currentUserValue?.username || 'Guest';
+  }
+
+  getUserInitial(): string {
+    return this.getUsername().charAt(0).toUpperCase();
+  }
+
+  openProfileSettings(): void {
+    this.profileSettingsVisible = true;
+  }
+
+  toggleTheme(): void {
+    this.themeService.toggleTheme();
   }
 
   logout(): void {
     this.authService.logout();
-    this.router.navigate(['/login']);
+    void this.router.navigate(['/login']);
   }
 }

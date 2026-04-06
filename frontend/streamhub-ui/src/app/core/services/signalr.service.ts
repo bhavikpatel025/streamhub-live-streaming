@@ -20,10 +20,22 @@ export class SignalRService {
   public chatHistory$ = new BehaviorSubject<ChatMessage[]>([]);
   public hubError$ = new Subject<string>();
   public viewerCount$ = new BehaviorSubject<number>(0);
+  public likeCount$ = new BehaviorSubject<number>(0);
+  public dislikeCount$ = new BehaviorSubject<number>(0);
   public streamStarted$ = new Subject<number>();
   public streamEnded$ = new Subject<number>();
 
   constructor(private authService: AuthService) {}
+
+  private normalizeImageUrl(message: ChatMessage): ChatMessage {
+    if (message.profileImageUrl && !message.profileImageUrl.startsWith('http')) {
+      return {
+        ...message,
+        profileImageUrl: `${environment.signalRUrl}${message.profileImageUrl}`
+      };
+    }
+    return message;
+  }
 
   startChatConnection(): Promise<void> {
     if (this.chatHubConnection) {
@@ -39,11 +51,11 @@ export class SignalRService {
       .build();
 
     this.chatHubConnection.on('ReceiveMessage', (message: ChatMessage) => {
-      this.chatMessage$.next(message);
+      this.chatMessage$.next(this.normalizeImageUrl(message));
     });
 
     this.chatHubConnection.on('LoadMessages', (messages: ChatMessage[]) => {
-      this.chatHistory$.next(messages);
+      this.chatHistory$.next(messages.map(m => this.normalizeImageUrl(m)));
     });
 
     this.chatHubConnection.on('Error', (message: string) => {
@@ -130,6 +142,11 @@ export class SignalRService {
       this.streamEnded$.next(streamId);
     });
 
+    this.streamHubConnection.on('ReactionUpdated', (data: { likes: number; dislikes: number }) => {
+      this.likeCount$.next(data.likes);
+      this.dislikeCount$.next(data.dislikes);
+    });
+
     this.streamHubConnection.onreconnected(async () => {
       if (this.activeViewerStreamId) {
         await this.streamHubConnection?.invoke('JoinStream', this.activeViewerStreamId);
@@ -183,6 +200,8 @@ export class SignalRService {
   async stopStreamConnection(): Promise<void> {
     this.activeViewerStreamId = undefined;
     this.viewerCount$.next(0);
+    this.likeCount$.next(0);
+    this.dislikeCount$.next(0);
     this.streamStartPromise = undefined;
 
     if (this.streamHubConnection) {

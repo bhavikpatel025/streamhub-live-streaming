@@ -104,6 +104,38 @@ namespace StreamHub.Infrastructure.Migrations
                     b.ToTable("Streams");
                 });
 
+            modelBuilder.Entity("StreamHub.Domain.Entities.StreamReaction", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ReactionType")
+                        .IsRequired()
+                        .HasMaxLength(15)
+                        .HasColumnType("nvarchar(15)");
+
+                    b.Property<int>("StreamId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("StreamId", "UserId")
+                        .IsUnique();
+
+                    b.ToTable("StreamReactions");
+                });
+
             modelBuilder.Entity("StreamHub.Domain.Entities.User", b =>
                 {
                     b.Property<int>("Id")
@@ -122,6 +154,9 @@ namespace StreamHub.Infrastructure.Migrations
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProfileImageUrl")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Username")
@@ -166,6 +201,25 @@ namespace StreamHub.Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("StreamHub.Domain.Entities.StreamReaction", b =>
+                {
+                    b.HasOne("StreamHub.Domain.Entities.Stream", "Stream")
+                        .WithMany()
+                        .HasForeignKey("StreamId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("StreamHub.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Stream");
 
                     b.Navigation("User");
                 });

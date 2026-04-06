@@ -2,106 +2,58 @@ import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { MessageService } from 'primeng/api';
+import { AvatarModule } from 'primeng/avatar';
+import { ButtonModule } from 'primeng/button';
+import { SkeletonModule } from 'primeng/skeleton';
+import { TagModule } from 'primeng/tag';
 import { SignalRService } from '../../../core/services/signalr.service';
 import { StreamService } from '../../../core/services/stream.service';
+import { StreamReactionService } from '../../../core/services/stream-reaction.service';
 import { Stream } from '../../../core/models/stream.model';
 import { ChatComponent } from '../../shared/chat/chat.component';
 import { VideoPlayerComponent } from '../../shared/video-player/video-player.component';
+import { UserAvatarComponent } from '../../shared/user-avatar/user-avatar.component';
 
 @Component({
   selector: 'app-stream-view',
   standalone: true,
-  imports: [CommonModule, VideoPlayerComponent, ChatComponent],
-  template: `
-    <div class="container-fluid mt-4">
-      @if (loading) {
-        <div class="text-center py-5">
-          <div class="spinner-border text-primary"></div>
-        </div>
-      } @else if (stream) {
-        <div class="row">
-          <div class="col-lg-9">
-            <app-video-player [streamKey]="stream.streamKey"></app-video-player>
-
-            <div class="stream-info mt-3">
-              <div class="d-flex justify-content-between align-items-start">
-                <div>
-                  <h3>{{ stream.title }}</h3>
-                  <p class="text-muted">{{ stream.description }}</p>
-                  <div class="d-flex gap-3 align-items-center">
-                    <span class="streamer-name">
-                      <i class="bi bi-person-circle"></i> {{ stream.username }}
-                    </span>
-                    <span class="badge bg-danger">
-                      <i class="bi bi-circle-fill pulse"></i> LIVE
-                    </span>
-                    <span class="viewer-count">
-                      <i class="bi bi-eye-fill"></i> {{ viewerCount }} viewers
-                    </span>
-                  </div>
-                </div>
-                <button class="btn btn-outline-secondary" (click)="goBack()">
-                  <i class="bi bi-arrow-left"></i> Back
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-lg-3">
-            <app-chat [streamId]="stream.id"></app-chat>
-          </div>
-        </div>
-      } @else {
-        <div class="alert alert-warning">
-          Stream not found or no longer available.
-        </div>
-      }
-    </div>
-  `,
-  styles: [`
-    .stream-info {
-      padding: 20px;
-      background: #f8f9fa;
-      border-radius: 8px;
-    }
-
-    .streamer-name {
-      font-weight: 500;
-      color: #007bff;
-      font-size: 1.1rem;
-    }
-
-    .viewer-count {
-      font-size: 1rem;
-      color: #666;
-    }
-
-    .pulse {
-      animation: pulse 1.5s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
-    }
-  `]
+  imports: [
+    CommonModule,
+    VideoPlayerComponent,
+    ChatComponent,
+    AvatarModule,
+    ButtonModule,
+    TagModule,
+    SkeletonModule,
+    UserAvatarComponent
+  ],
+  templateUrl: './stream-view.component.html',
+  styleUrls: ['./stream-view.component.scss']
 })
 export class StreamViewComponent implements OnInit, OnDestroy {
   stream?: Stream;
   loading = true;
   viewerCount = 0;
+  likeCount = 0;
+  dislikeCount = 0;
+  userReaction: 'LIKE' | 'DISLIKE' | 'NONE' = 'NONE';
+  reactionLoading = false;
   private subscriptions: Subscription[] = [];
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
+    private messageService: MessageService,
     private streamService: StreamService,
+    private streamReactionService: StreamReactionService,
     private signalRService: SignalRService
   ) {}
 
   ngOnInit(): void {
     const streamId = Number(this.route.snapshot.paramMap.get('id'));
     this.loadStream(streamId);
+    this.loadReactions(streamId);
     void this.setupSignalR(streamId);
   }
 
@@ -127,6 +79,45 @@ export class StreamViewComponent implements OnInit, OnDestroy {
       error: (error) => {
         console.error('Failed to load stream:', error);
         this.loading = false;
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Stream unavailable',
+          detail: 'This stream could not be loaded.'
+        });
+      }
+    });
+  }
+
+  private loadReactions(streamId: number): void {
+    this.streamReactionService.getReactions(streamId).subscribe({
+      next: (result) => {
+        this.likeCount = result.likes;
+        this.dislikeCount = result.dislikes;
+        this.userReaction = result.userReaction;
+      },
+      error: (error) => {
+        console.error('Failed to load reactions:', error);
+      }
+    });
+  }
+
+  toggleReaction(reactionType: 'LIKE' | 'DISLIKE'): void {
+    if (!this.stream || this.reactionLoading) return;
+
+    this.reactionLoading = true;
+    this.streamReactionService.toggleReaction(this.stream.id, reactionType).subscribe({
+      next: (result) => {
+        this.userReaction = result.userReaction;
+        this.reactionLoading = false;
+      },
+      error: (error) => {
+        console.error('Failed to toggle reaction:', error);
+        this.reactionLoading = false;
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Could not update reaction.'
+        });
       }
     });
   }
@@ -142,19 +133,42 @@ export class StreamViewComponent implements OnInit, OnDestroy {
         this.signalRService.viewerCount$.subscribe((count) => {
           this.viewerCount = count;
         }),
+        this.signalRService.likeCount$.subscribe((count) => {
+          if (count > 0 || this.likeCount > 0) {
+            this.likeCount = count;
+          }
+        }),
+        this.signalRService.dislikeCount$.subscribe((count) => {
+          if (count > 0 || this.dislikeCount > 0) {
+            this.dislikeCount = count;
+          }
+        }),
         this.signalRService.streamEnded$.subscribe((endedStreamId) => {
           if (endedStreamId === streamId) {
-            alert('Stream has ended');
+            this.messageService.add({
+              severity: 'warn',
+              summary: 'Stream ended',
+              detail: 'The broadcaster has ended this live session.'
+            });
             void this.router.navigate(['/streams']);
           }
         })
       );
     } catch (error) {
       console.error('SignalR connection failed:', error);
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Realtime unavailable',
+        detail: 'Chat and viewer updates could not connect.'
+      });
     }
   }
 
   goBack(): void {
     void this.router.navigate(['/streams']);
+  }
+
+  getUserInitial(username?: string): string {
+    return username?.charAt(0).toUpperCase() || 'S';
   }
 }

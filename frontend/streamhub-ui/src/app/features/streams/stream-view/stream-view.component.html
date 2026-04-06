@@ -1,1 +1,86 @@
-<p>stream-view works!</p>
+<section class="app-page">
+  @if (loading) {
+    <div class="watch-skeleton">
+      <p-skeleton width="100%" height="28rem" borderRadius="1.5rem"></p-skeleton>
+      <div class="watch-skeleton__meta">
+        <p-skeleton width="60%" height="2rem"></p-skeleton>
+        <p-skeleton width="35%" height="1rem"></p-skeleton>
+        <p-skeleton width="85%" height="1rem"></p-skeleton>
+      </div>
+    </div>
+  } @else if (stream) {
+    <div class="watch-layout">
+      <div class="watch-layout__main">
+        <app-video-player [streamKey]="stream.streamKey"></app-video-player>
+
+        <div class="watch-info">
+          <div class="watch-info__top">
+            <div class="watch-info__status">
+              <p-tag value="LIVE" severity="danger"></p-tag>
+              <span class="watch-info__viewers">{{ viewerCount }} watching now</span>
+            </div>
+          </div>
+
+          <h2 class="watch-info__title">{{ stream.title }}</h2>
+          <p class="watch-info__desc">{{ stream.description }}</p>
+
+          <div class="watch-info__bar">
+            <div class="watch-info__identity">
+              <app-user-avatar [username]="stream.username" [profileImageUrl]="stream.profileImageUrl" [size]="36"></app-user-avatar>
+              <strong class="watch-info__username">{{ stream.username }}</strong>
+            </div>
+
+            <div class="watch-info__actions">
+              <div class="reaction-group" id="like-dislike-group">
+                <button
+                  class="reaction-btn reaction-btn--like"
+                  [class.reaction-btn--active]="userReaction === 'LIKE'"
+                  [disabled]="reactionLoading"
+                  (click)="toggleReaction('LIKE')"
+                  id="like-toggle-btn"
+                >
+                  <i class="pi" [ngClass]="userReaction === 'LIKE' ? 'pi-thumbs-up-fill' : 'pi-thumbs-up'"></i>
+                  <span class="reaction-btn__count">{{ likeCount }}</span>
+                </button>
+                <span class="reaction-divider"></span>
+                <button
+                  class="reaction-btn reaction-btn--dislike"
+                  [class.reaction-btn--active]="userReaction === 'DISLIKE'"
+                  [disabled]="reactionLoading"
+                  (click)="toggleReaction('DISLIKE')"
+                  id="dislike-btn"
+                >
+                  <i class="pi" [ngClass]="userReaction === 'DISLIKE' ? 'pi-thumbs-down-fill' : 'pi-thumbs-down'"></i>
+                  <span class="reaction-btn__count">{{ dislikeCount }}</span>
+                </button>
+              </div>
+
+              <p-button
+                label="Back to browse"
+                icon="pi pi-arrow-left"
+                severity="secondary"
+                [rounded]="true"
+                (onClick)="goBack()">
+              </p-button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <aside class="watch-layout__chat">
+        <app-chat [streamId]="stream.id"></app-chat>
+      </aside>
+    </div>
+  } @else {
+    <div class="empty-state">
+      <h3>Stream not found</h3>
+      <p>This broadcast is no longer available.</p>
+      <p-button
+        label="Back to streams"
+        icon="pi pi-arrow-left"
+        severity="secondary"
+        (onClick)="goBack()">
+      </p-button>
+    </div>
+  }
+</section>
