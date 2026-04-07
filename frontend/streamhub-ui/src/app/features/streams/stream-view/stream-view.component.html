@@ -9,15 +9,15 @@
       </div>
     </div>
   } @else if (stream) {
-    <div class="watch-layout">
+    <div class="watch-layout" [class.watch-layout--no-chat]="isChatCollapsed">
       <div class="watch-layout__main">
         <app-video-player [streamKey]="stream.streamKey"></app-video-player>
 
         <div class="watch-info">
           <div class="watch-info__top">
-            <div class="watch-info__status">
-              <p-tag value="LIVE" severity="danger"></p-tag>
-              <span class="watch-info__viewers">{{ viewerCount }} watching now</span>
+            <div class="watch-info__status viewer-count" style="display: flex; gap: 0.5rem; align-items: center;">
+              <p-tag value="LIVE" severity="danger" class="live-badge"></p-tag>
+              <span class="watch-info__viewers viewer-text" style="color: var(--app-text-muted); font-size: 0.85rem;">{{ viewerCount || 0 }} watching now</span>
             </div>
           </div>
 
@@ -55,6 +55,14 @@
                 </button>
               </div>
 
+              <p-button *ngIf="isChatCollapsed"
+                label="Expand Chat"
+                icon="pi pi-comment"
+                severity="secondary"
+                [rounded]="true"
+                (onClick)="toggleChat()">
+              </p-button>
+
               <p-button
                 label="Back to browse"
                 icon="pi pi-arrow-left"
@@ -67,8 +75,8 @@
         </div>
       </div>
 
-      <aside class="watch-layout__chat">
-        <app-chat [streamId]="stream.id"></app-chat>
+      <aside class="watch-layout__chat" *ngIf="!isChatCollapsed">
+        <app-chat [streamId]="stream.id" (hideChat)="toggleChat()"></app-chat>
       </aside>
     </div>
   } @else {

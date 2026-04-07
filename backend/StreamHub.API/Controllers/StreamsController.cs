@@ -11,10 +11,12 @@ namespace StreamHub.API.Controllers;
 public class StreamsController : ControllerBase
 {
     private readonly IStreamService _streamService;
+    private readonly IStreamReactionService _streamReactionService;
 
-    public StreamsController(IStreamService streamService)
+    public StreamsController(IStreamService streamService, IStreamReactionService streamReactionService)
     {
         _streamService = streamService;
+        _streamReactionService = streamReactionService;
     }
 
     [HttpGet]
@@ -33,6 +35,31 @@ public class StreamsController : ControllerBase
             return NotFound(new { message = "Stream not found" });
         }
         return Ok(stream);
+    }
+
+    [HttpGet("{id}/stats")]
+    public async Task<ActionResult<StreamStatsDto>> GetStreamStats(int id)
+    {
+        var stream = await _streamService.GetStreamByIdAsync(id);
+        if (stream == null)
+        {
+            return NotFound(new { message = "Stream not found" });
+        }
+
+        var userId = 0;
+        if (User.Identity?.IsAuthenticated == true)
+        {
+            int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out userId);
+        }
+
+        var reactions = await _streamReactionService.GetStreamReactionsAsync(id, userId);
+
+        return Ok(new StreamStatsDto
+        {
+            Viewers = stream.ViewerCount,
+            Likes = reactions.Likes,
+            Dislikes = reactions.Dislikes
+        });
     }
 
     [Authorize]

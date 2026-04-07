@@ -5,6 +5,12 @@ import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { Stream, StreamListItem, CreateStreamRequest, StreamKeyResponse } from '../models/stream.model';
 
+export interface StreamStats {
+  viewers: number;
+  likes: number;
+  dislikes: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -33,6 +39,10 @@ export class StreamService {
     return this.http.get<Stream>(`${this.apiUrl}/${id}`).pipe(
       map(stream => this.normalizeImageUrl(stream))
     );
+  }
+
+  getStreamStats(id: number): Observable<StreamStats> {
+    return this.http.get<StreamStats>(`${this.apiUrl}/${id}/stats`);
   }
 
   getStreamByKey(streamKey: string): Observable<Stream> {

@@ -1,10 +1,13 @@
 <section class="chat-shell">
   <header class="chat-shell__header">
-    <div>
-      <span class="chat-shell__eyebrow">Live conversation</span>
-      <h3>Chat</h3>
+    <div style="display: flex; align-items: center; gap: 0.5rem;">
+      <p-button icon="pi pi-angle-right" [text]="true" severity="secondary" rounded="true" size="small" (onClick)="onHideChat()"></p-button>
+      <div>
+        <span class="chat-shell__eyebrow">Live conversation</span>
+        <h3 style="margin: 0.2rem 0 0 0;">Chat</h3>
+      </div>
     </div>
-    <p-tag [value]="messages.length + ' messages'" severity="contrast"></p-tag>
+    <p-tag [value]="messages.length + ' messages'" severity="secondary"></p-tag>
   </header>
 
   <div #chatMessages class="chat-shell__messages" (scroll)="onScroll()">

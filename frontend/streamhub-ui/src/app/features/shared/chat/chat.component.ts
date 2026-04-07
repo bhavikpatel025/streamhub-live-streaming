@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, Output, EventEmitter, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { AvatarModule } from 'primeng/avatar';
@@ -19,6 +19,7 @@ import { UserAvatarComponent } from '../user-avatar/user-avatar.component';
 })
 export class ChatComponent implements OnInit, OnDestroy {
   @Input() streamId!: number;
+  @Output() hideChat = new EventEmitter<void>();
   @ViewChild('chatMessages') chatMessages?: ElementRef<HTMLDivElement>;
 
   messages: ChatMessage[] = [];
@@ -81,6 +82,10 @@ export class ChatComponent implements OnInit, OnDestroy {
       .finally(() => {
         this.sending = false;
       });
+  }
+
+  onHideChat(): void {
+    this.hideChat.emit();
   }
 
   getUserInitial(username: string): string {

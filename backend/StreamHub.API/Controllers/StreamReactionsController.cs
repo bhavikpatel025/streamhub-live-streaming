@@ -38,7 +38,7 @@ public class StreamReactionsController : ControllerBase
 
         // Broadcast the update to all clients in the stream room
         await _hubContext.Clients.Group($"stream_{streamId}")
-            .SendAsync("ReactionUpdated", new { likes = result.Likes, dislikes = result.Dislikes });
+            .SendAsync("ReactionUpdated", new { streamId, likes = result.Likes, dislikes = result.Dislikes });
 
         return Ok(result);
     }

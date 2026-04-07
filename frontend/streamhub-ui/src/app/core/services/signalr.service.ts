@@ -20,8 +20,11 @@ export class SignalRService {
   public chatHistory$ = new BehaviorSubject<ChatMessage[]>([]);
   public hubError$ = new Subject<string>();
   public viewerCount$ = new BehaviorSubject<number>(0);
+  public viewerCountUpdated$ = new Subject<{ streamId: number, viewers: number }>();
+  public globalViewerCount$ = new Subject<{ streamId: number, viewers: number }>();
   public likeCount$ = new BehaviorSubject<number>(0);
   public dislikeCount$ = new BehaviorSubject<number>(0);
+  public reactionUpdated$ = new Subject<{ streamId: number, likes: number, dislikes: number }>();
   public streamStarted$ = new Subject<number>();
   public streamEnded$ = new Subject<number>();
 
@@ -130,8 +133,15 @@ export class SignalRService {
       .withAutomaticReconnect([0, 2000, 5000, 10000])
       .build();
 
-    this.streamHubConnection.on('ViewerCountUpdated', (count: number) => {
-      this.viewerCount$.next(count);
+    this.streamHubConnection.on('ViewerCountUpdated', (data: { streamId: number, viewers: number }) => {
+      this.viewerCountUpdated$.next(data);
+      if (this.activeViewerStreamId === data.streamId) {
+        this.viewerCount$.next(data.viewers);
+      }
+    });
+
+    this.streamHubConnection.on('GlobalViewerCountUpdated', (data: { streamId: number, viewers: number }) => {
+      this.globalViewerCount$.next(data);
     });
 
     this.streamHubConnection.on('StreamStarted', (streamId: number) => {
@@ -142,9 +152,12 @@ export class SignalRService {
       this.streamEnded$.next(streamId);
     });
 
-    this.streamHubConnection.on('ReactionUpdated', (data: { likes: number; dislikes: number }) => {
-      this.likeCount$.next(data.likes);
-      this.dislikeCount$.next(data.dislikes);
+    this.streamHubConnection.on('ReactionUpdated', (data: { streamId: number; likes: number; dislikes: number }) => {
+      this.reactionUpdated$.next(data);
+      if (this.activeViewerStreamId === data.streamId) {
+        this.likeCount$.next(data.likes);
+        this.dislikeCount$.next(data.dislikes);
+      }
     });
 
     this.streamHubConnection.onreconnected(async () => {
@@ -181,7 +194,6 @@ export class SignalRService {
 
     if (this.activeViewerStreamId === streamId) {
       this.activeViewerStreamId = undefined;
-      this.viewerCount$.next(0);
     }
   }
 
@@ -199,9 +211,6 @@ export class SignalRService {
 
   async stopStreamConnection(): Promise<void> {
     this.activeViewerStreamId = undefined;
-    this.viewerCount$.next(0);
-    this.likeCount$.next(0);
-    this.dislikeCount$.next(0);
     this.streamStartPromise = undefined;
 
     if (this.streamHubConnection) {
