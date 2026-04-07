@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { StreamListItem } from '../../../core/models/stream.model';
 import { StreamService } from '../../../core/services/stream.service';
+import { SignalRService } from '../../../core/services/signalr.service';
+import { Subscription } from 'rxjs';
 import { UserAvatarComponent } from '../../shared/user-avatar/user-avatar.component';
 
 @Component({
@@ -17,20 +19,36 @@ export class StreamListComponent implements OnInit, OnDestroy {
   streams: StreamListItem[] = [];
   loading = true;
   private refreshHandle?: ReturnType<typeof setInterval>;
+  private subscriptions: Subscription[] = [];
 
   constructor(
     private streamService: StreamService,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private signalRService: SignalRService
   ) {}
 
   ngOnInit(): void {
     this.loadStreams();
     this.refreshHandle = setInterval(() => this.loadStreams(), 30000);
+
+    if (this.authService.isAuthenticated) {
+      this.signalRService.startStreamConnection()
+        .then(() => {
+          this.subscriptions.push(this.signalRService.globalViewerCount$.subscribe((data) => {
+            const stream = this.streams.find(s => s.id === data.streamId);
+            if (stream) {
+              stream.viewerCount = data.viewers;
+            }
+          }));
+        })
+        .catch(err => console.error('SignalR streams list connect error:', err));
+    }
   }
 
   ngOnDestroy(): void {
     clearInterval(this.refreshHandle);
+    this.subscriptions.forEach(s => s.unsubscribe());
   }
 
   get totalViewers(): number {

@@ -39,6 +39,7 @@ export class StreamViewComponent implements OnInit, OnDestroy {
   dislikeCount = 0;
   userReaction: 'LIKE' | 'DISLIKE' | 'NONE' = 'NONE';
   reactionLoading = false;
+  isChatCollapsed = false;
   private subscriptions: Subscription[] = [];
 
   constructor(
@@ -48,12 +49,12 @@ export class StreamViewComponent implements OnInit, OnDestroy {
     private streamService: StreamService,
     private streamReactionService: StreamReactionService,
     private signalRService: SignalRService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     const streamId = Number(this.route.snapshot.paramMap.get('id'));
     this.loadStream(streamId);
-    this.loadReactions(streamId);
+    this.loadStreamStats(streamId);
     void this.setupSignalR(streamId);
   }
 
@@ -88,11 +89,20 @@ export class StreamViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  private loadReactions(streamId: number): void {
-    this.streamReactionService.getReactions(streamId).subscribe({
+  private loadStreamStats(streamId: number): void {
+    this.streamService.getStreamStats(streamId).subscribe({
       next: (result) => {
+        this.viewerCount = result.viewers;
         this.likeCount = result.likes;
         this.dislikeCount = result.dislikes;
+      },
+      error: (error) => {
+        console.error('Failed to load stream stats:', error);
+      }
+    });
+
+    this.streamReactionService.getReactions(streamId).subscribe({
+      next: (result) => {
         this.userReaction = result.userReaction;
       },
       error: (error) => {
@@ -126,21 +136,17 @@ export class StreamViewComponent implements OnInit, OnDestroy {
     try {
       await this.signalRService.startStreamConnection();
       await this.signalRService.startChatConnection();
-      await this.signalRService.joinStream(streamId);
-      await this.signalRService.joinChatRoom(streamId);
 
       this.subscriptions.push(
-        this.signalRService.viewerCount$.subscribe((count) => {
-          this.viewerCount = count;
-        }),
-        this.signalRService.likeCount$.subscribe((count) => {
-          if (count > 0 || this.likeCount > 0) {
-            this.likeCount = count;
+        this.signalRService.viewerCountUpdated$.subscribe((data) => {
+          if (data.streamId === streamId) {
+            this.viewerCount = data.viewers;
           }
         }),
-        this.signalRService.dislikeCount$.subscribe((count) => {
-          if (count > 0 || this.dislikeCount > 0) {
-            this.dislikeCount = count;
+        this.signalRService.reactionUpdated$.subscribe((data) => {
+          if (data.streamId === streamId) {
+            this.likeCount = data.likes;
+            this.dislikeCount = data.dislikes;
           }
         }),
         this.signalRService.streamEnded$.subscribe((endedStreamId) => {
@@ -154,6 +160,9 @@ export class StreamViewComponent implements OnInit, OnDestroy {
           }
         })
       );
+
+      await this.signalRService.joinStream(streamId);
+      await this.signalRService.joinChatRoom(streamId);
     } catch (error) {
       console.error('SignalR connection failed:', error);
       this.messageService.add({
@@ -166,6 +175,10 @@ export class StreamViewComponent implements OnInit, OnDestroy {
 
   goBack(): void {
     void this.router.navigate(['/streams']);
+  }
+
+  toggleChat(): void {
+    this.isChatCollapsed = !this.isChatCollapsed;
   }
 
   getUserInitial(username?: string): string {

@@ -77,7 +77,11 @@ public class StreamHub : Hub
         {
             var viewerCount = GetViewerCount(streamId);
             await _streamService.UpdateViewerCountAsync(streamId, viewerCount);
-            await Clients.Group(GetGroupName(streamId)).SendAsync("ViewerCountUpdated", viewerCount);
+
+            await Clients.Group(GetGroupName(streamId))
+                .SendAsync("ViewerCountUpdated", new { streamId, viewers = viewerCount });
+
+            await Clients.All.SendAsync("GlobalViewerCountUpdated", new { streamId, viewers = viewerCount });
         }
         catch (Exception ex)
         {

@@ -3,6 +3,11 @@
   gap: 1.5rem;
   grid-template-columns: minmax(0, 1.5fr) minmax(340px, 0.7fr);
   align-items: start;
+  transition: grid-template-columns 0.3s ease;
+}
+
+.watch-layout--no-chat {
+  grid-template-columns: 1fr;
 }
 
 .watch-layout__main {
