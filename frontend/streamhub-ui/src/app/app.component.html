@@ -10,6 +10,17 @@
           </span>
         </a>
 
+        <div class="header-search">
+          <i class="pi pi-search header-search__icon"></i>
+          <input
+            type="text"
+            class="header-search__input"
+            placeholder="Search"
+            (input)="onSearchInput($event)"
+            [value]="searchQuery"
+          />
+        </div>
+
         <nav class="desktop-links">
           <a class="app-link" routerLink="/streams">Browse</a>
           <a *ngIf="isAuthenticated()" class="app-link" routerLink="/dashboard">Dashboard</a>

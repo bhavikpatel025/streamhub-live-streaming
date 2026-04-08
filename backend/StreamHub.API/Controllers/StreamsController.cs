@@ -35,6 +35,19 @@ public class StreamsController : ControllerBase
         return Ok(streams);
     }
 
+    [HttpGet("search")]
+    public async Task<ActionResult<IEnumerable<StreamListDto>>> SearchStreams([FromQuery] string query)
+    {
+        if (string.IsNullOrWhiteSpace(query))
+        {
+            var streams = await _streamService.GetLiveStreamsAsync();
+            return Ok(streams);
+        }
+
+        var results = await _streamService.SearchLiveStreamsAsync(query.Trim());
+        return Ok(results);
+    }
+
     [HttpGet("{id}")]
     public async Task<ActionResult<StreamDto>> GetStreamById(int id)
     {

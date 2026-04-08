@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using StreamHub.Application.Interfaces;
 using StreamHub.Domain.Entities;
 using StreamHub.Infrastructure.Data;
@@ -34,6 +34,18 @@ public class StreamRepository : IStreamRepository
         return await _context.Streams
             .Include(s => s.User)
             .Where(s => s.IsLive)
+            .OrderByDescending(s => s.ViewerCount)
+            .ToListAsync();
+    }
+
+    public async Task<IEnumerable<Stream>> SearchLiveStreamsAsync(string query)
+    {
+        var lowerQuery = query.ToLower();
+        return await _context.Streams
+            .Include(s => s.User)
+            .Where(s => s.IsLive &&
+                (s.Title.ToLower().Contains(lowerQuery) ||
+                 s.User.Username.ToLower().Contains(lowerQuery)))
             .OrderByDescending(s => s.ViewerCount)
             .ToListAsync();
     }

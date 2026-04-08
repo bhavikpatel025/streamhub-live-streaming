@@ -20,6 +20,7 @@ public interface IStreamService
     Task<StreamDto?> GetStreamByIdAsync(int id);
     Task<StreamDto?> GetStreamByKeyAsync(string streamKey);
     Task<IEnumerable<StreamListDto>> GetLiveStreamsAsync();
+    Task<IEnumerable<StreamListDto>> SearchLiveStreamsAsync(string query);
     Task<IEnumerable<StreamDto>> GetUserStreamsAsync(int userId);
     Task<StreamKeyDto> GetStreamKeyAsync(int streamId, int userId);
     Task StartStreamAsync(int streamId, int userId);
@@ -58,4 +59,3 @@ public interface IJwtService
 {
     string GenerateToken(int userId, string username, string email);
 }
-

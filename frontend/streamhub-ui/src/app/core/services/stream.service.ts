@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
@@ -31,6 +31,13 @@ export class StreamService {
 
   getLiveStreams(): Observable<StreamListItem[]> {
     return this.http.get<StreamListItem[]>(this.apiUrl).pipe(
+      map(streams => streams.map(stream => this.normalizeImageUrl(stream)))
+    );
+  }
+
+  searchStreams(query: string): Observable<StreamListItem[]> {
+    const params = new HttpParams().set('query', query);
+    return this.http.get<StreamListItem[]>(`${this.apiUrl}/search`, { params }).pipe(
       map(streams => streams.map(stream => this.normalizeImageUrl(stream)))
     );
   }

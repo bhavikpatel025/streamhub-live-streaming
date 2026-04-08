@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { StreamListItem } from '../../../core/models/stream.model';
 import { StreamService } from '../../../core/services/stream.service';
@@ -19,6 +19,8 @@ import { UserAvatarComponent } from '../../shared/user-avatar/user-avatar.compon
 export class StreamListComponent implements OnInit, OnDestroy {
   streams: StreamListItem[] = [];
   loading = true;
+  isExpanded = false;
+  private searchQuery = '';
   private refreshHandle?: ReturnType<typeof setInterval>;
   private subscriptions: Subscription[] = [];
 
@@ -26,10 +28,22 @@ export class StreamListComponent implements OnInit, OnDestroy {
     private streamService: StreamService,
     private authService: AuthService,
     private router: Router,
+    private route: ActivatedRoute,
     private signalRService: SignalRService
   ) {}
 
   ngOnInit(): void {
+    this.subscriptions.push(
+      this.route.queryParams.subscribe(params => {
+        const query = params['search'] || '';
+        if (query !== this.searchQuery) {
+          this.searchQuery = query;
+          this.isExpanded = false;
+          this.loadStreams();
+        }
+      })
+    );
+
     this.loadStreams();
     this.refreshHandle = setInterval(() => this.loadStreams(), 30000);
 
@@ -52,12 +66,31 @@ export class StreamListComponent implements OnInit, OnDestroy {
     this.subscriptions.forEach(s => s.unsubscribe());
   }
 
+  get visibleStreams(): StreamListItem[] {
+    if (this.isExpanded || this.streams.length <= 4) {
+      return this.streams;
+    }
+    return this.streams.slice(0, 4);
+  }
+
+  get hasMoreStreams(): boolean {
+    return this.streams.length > 4;
+  }
+
   get totalViewers(): number {
     return this.streams.reduce((sum, stream) => sum + stream.viewerCount, 0);
   }
 
+  toggleStreams(): void {
+    this.isExpanded = !this.isExpanded;
+  }
+
   loadStreams(): void {
-    this.streamService.getLiveStreams().subscribe({
+    const source$ = this.searchQuery
+      ? this.streamService.searchStreams(this.searchQuery)
+      : this.streamService.getLiveStreams();
+
+    source$.subscribe({
       next: (streams) => {
         this.streams = streams;
         this.loading = false;

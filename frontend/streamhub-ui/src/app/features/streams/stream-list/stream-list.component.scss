@@ -187,6 +187,51 @@
   width: 65%;
 }
 
+/* Show More / Show Less toggle */
+.show-toggle-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+.show-toggle-line {
+  flex: 1;
+  height: 1px;
+  background-color: var(--app-border-color);
+  opacity: 0.6;
+}
+
+.show-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.6rem;
+  margin: 0 1.5rem;
+  border: 1px solid var(--app-border-color);
+  border-radius: 999px;
+  background: var(--app-surface-strong);
+  color: var(--app-text-color);
+  font-weight: 600;
+  font-size: 0.92rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.show-toggle-btn:hover {
+  background: var(--app-pill-bg);
+  border-color: var(--app-border-strong);
+  transform: translateY(-1px);
+  box-shadow: var(--app-shadow-soft);
+}
+
+.show-toggle-btn i {
+  font-size: 0.85rem;
+  transition: transform 0.25s ease;
+}
+
 @media (max-width: 640px) {
   .stream-card__thumbnail {
     height: 13rem;

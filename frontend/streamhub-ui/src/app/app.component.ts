@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { Router, RouterLink, RouterOutlet } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Router, RouterLink, RouterOutlet, ActivatedRoute } from '@angular/router';
+import { Subject, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
@@ -43,6 +44,8 @@ export class AppComponent implements OnInit, OnDestroy {
   notificationsOpen = false;
   profileMenuOpen = false;
   activeNotificationMenuId: number | null = null;
+  searchQuery = '';
+  private searchSubject = new Subject<string>();
   private subscriptions: Subscription[] = [];
 
   constructor(
@@ -51,7 +54,8 @@ export class AppComponent implements OnInit, OnDestroy {
     private notificationService: NotificationService,
     private signalRService: SignalRService,
     private messageService: MessageService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {
     this.themeService.initializeTheme();
   }
@@ -84,6 +88,17 @@ export class AppComponent implements OnInit, OnDestroy {
           life: 4000,
           data: notification
         });
+      }),
+      this.route.queryParams.subscribe(params => {
+        if (params['search'] !== undefined) {
+          this.searchQuery = params['search'];
+        }
+      }),
+      this.searchSubject.pipe(
+        debounceTime(300),
+        distinctUntilChanged()
+      ).subscribe(query => {
+        void this.router.navigate(['/streams'], { queryParams: { search: query || null }});
       })
     );
   }
@@ -106,6 +121,12 @@ export class AppComponent implements OnInit, OnDestroy {
 
   get unreadNotificationsCount(): number {
     return this.notifications.filter((notification) => !notification.isRead).length;
+  }
+
+  onSearchInput(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.searchQuery = value;
+    this.searchSubject.next(value);
   }
 
   async initializeRealtimeNotifications(): Promise<void> {

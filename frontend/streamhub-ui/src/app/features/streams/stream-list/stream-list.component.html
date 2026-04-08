@@ -56,7 +56,7 @@
     </div>
   } @else {
     <div class="stream-grid">
-      @for (stream of streams; track stream.id) {
+      @for (stream of visibleStreams; track stream.id) {
         <article class="stream-card" (click)="watchStream(stream.id)">
           <div class="stream-card__thumbnail">
             <div class="stream-card__overlay">
@@ -90,5 +90,20 @@
         </article>
       }
     </div>
+
+    @if (hasMoreStreams) {
+      <div class="show-toggle-container">
+        <div class="show-toggle-line"></div>
+        <button
+          class="show-toggle-btn"
+          type="button"
+          id="show-toggle-btn"
+          (click)="toggleStreams()">
+          <span>{{ isExpanded ? 'Show less' : 'Show more' }}</span>
+          <i class="pi" [ngClass]="isExpanded ? 'pi-chevron-up' : 'pi-chevron-down'"></i>
+        </button>
+        <div class="show-toggle-line"></div>
+      </div>
+    }
   }
 </section>

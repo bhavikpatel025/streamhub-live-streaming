@@ -1,4 +1,4 @@
-﻿using StreamHub.Domain.Entities;
+using StreamHub.Domain.Entities;
 using Stream = StreamHub.Domain.Entities.Stream;
 
 namespace StreamHub.Application.Interfaces;
@@ -18,6 +18,7 @@ public interface IStreamRepository
     Task<Stream?> GetByIdAsync(int id);
     Task<Stream?> GetByStreamKeyAsync(string streamKey);
     Task<IEnumerable<Stream>> GetAllLiveStreamsAsync();
+    Task<IEnumerable<Stream>> SearchLiveStreamsAsync(string query);
     Task<IEnumerable<Stream>> GetUserStreamsAsync(int userId);
     Task<Stream> CreateAsync(Stream stream);
     Task UpdateAsync(Stream stream);

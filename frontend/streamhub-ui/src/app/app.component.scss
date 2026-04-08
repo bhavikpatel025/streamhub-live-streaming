@@ -42,6 +42,7 @@
   align-items: center;
   gap: 2rem;
   min-width: 0;
+  flex: 1;
 }
 
 .brand-mark {
@@ -50,6 +51,8 @@
   gap: 0.9rem;
   text-decoration: none;
   color: var(--app-text-color);
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .brand-mark__signal {
@@ -74,6 +77,40 @@
 .brand-mark__copy small {
   color: var(--app-text-muted);
   font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.header-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 300px;
+  flex-shrink: 1;
+}
+
+.header-search__icon {
+  position: absolute;
+  left: 1rem;
+  color: var(--app-text-muted);
+  font-size: 0.9rem;
+}
+
+.header-search__input {
+  width: 100%;
+  padding: 0.65rem 1rem 0.65rem 2.5rem;
+  border: 1px solid var(--app-border-color);
+  border-radius: 999px;
+  background: var(--app-surface-strong);
+  color: var(--app-text-color);
+  font-size: 0.9rem;
+  transition: all 0.25s ease;
+  outline: none;
+}
+
+.header-search__input:focus {
+  border-color: var(--app-border-strong);
+  box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.15);
 }
 
 .desktop-links,
@@ -81,10 +118,12 @@
   display: flex;
   align-items: center;
   gap: 0.9rem;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .desktop-links {
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 
 .app-shell__content {

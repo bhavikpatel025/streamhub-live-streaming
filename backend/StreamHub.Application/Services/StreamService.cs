@@ -54,6 +54,12 @@ public class StreamService : IStreamService
         return _mapper.Map<IEnumerable<StreamListDto>>(streams);
     }
 
+    public async Task<IEnumerable<StreamListDto>> SearchLiveStreamsAsync(string query)
+    {
+        var streams = await _streamRepository.SearchLiveStreamsAsync(query);
+        return _mapper.Map<IEnumerable<StreamListDto>>(streams);
+    }
+
     public async Task<IEnumerable<StreamDto>> GetUserStreamsAsync(int userId)
     {
         var streams = await _streamRepository.GetUserStreamsAsync(userId);
