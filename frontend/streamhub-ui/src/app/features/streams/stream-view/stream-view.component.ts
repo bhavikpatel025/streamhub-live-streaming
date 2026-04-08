@@ -7,6 +7,7 @@ import { AvatarModule } from 'primeng/avatar';
 import { ButtonModule } from 'primeng/button';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TagModule } from 'primeng/tag';
+import { TooltipModule } from 'primeng/tooltip';
 import { SignalRService } from '../../../core/services/signalr.service';
 import { StreamService } from '../../../core/services/stream.service';
 import { StreamReactionService } from '../../../core/services/stream-reaction.service';
@@ -26,6 +27,7 @@ import { UserAvatarComponent } from '../../shared/user-avatar/user-avatar.compon
     ButtonModule,
     TagModule,
     SkeletonModule,
+    TooltipModule,
     UserAvatarComponent
   ],
   templateUrl: './stream-view.component.html',

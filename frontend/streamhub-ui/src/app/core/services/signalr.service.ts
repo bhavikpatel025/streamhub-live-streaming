@@ -4,6 +4,7 @@ import { BehaviorSubject, Subject } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AuthService } from './auth.service';
 import { ChatMessage } from '../models/chat.model';
+import { StreamStartedNotification } from '../models/notification.model';
 
 @Injectable({
   providedIn: 'root'
@@ -27,6 +28,7 @@ export class SignalRService {
   public reactionUpdated$ = new Subject<{ streamId: number, likes: number, dislikes: number }>();
   public streamStarted$ = new Subject<number>();
   public streamEnded$ = new Subject<number>();
+  public streamStartedNotification$ = new Subject<StreamStartedNotification>();
 
   constructor(private authService: AuthService) {}
 
@@ -146,6 +148,10 @@ export class SignalRService {
 
     this.streamHubConnection.on('StreamStarted', (streamId: number) => {
       this.streamStarted$.next(streamId);
+    });
+
+    this.streamHubConnection.on('StreamStartedNotification', (notification: StreamStartedNotification) => {
+      this.streamStartedNotification$.next(notification);
     });
 
     this.streamHubConnection.on('StreamEnded', (streamId: number) => {

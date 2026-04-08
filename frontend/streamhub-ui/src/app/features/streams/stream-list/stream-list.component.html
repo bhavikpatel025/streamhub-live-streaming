@@ -61,7 +61,11 @@
           <div class="stream-card__thumbnail">
             <div class="stream-card__overlay">
               <span class="live-badge">LIVE</span>
-              <span class="stream-card__viewers">{{ getViewerLabel(stream.viewerCount) }}</span>
+              <span
+                class="stream-card__viewers"
+                pTooltip="Current viewers"
+                tooltipPosition="top"
+                tooltipStyleClass="app-tooltip">{{ getViewerLabel(stream.viewerCount) }}</span>
             </div>
             <div class="stream-card__glow"></div>
             <span class="stream-card__channel">{{ stream.username }}</span>

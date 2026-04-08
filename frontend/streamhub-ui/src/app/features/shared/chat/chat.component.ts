@@ -6,6 +6,7 @@ import { AvatarModule } from 'primeng/avatar';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { TagModule } from 'primeng/tag';
+import { TooltipModule } from 'primeng/tooltip';
 import { SignalRService } from '../../../core/services/signalr.service';
 import { ChatMessage } from '../../../core/models/chat.model';
 import { UserAvatarComponent } from '../user-avatar/user-avatar.component';
@@ -13,7 +14,7 @@ import { UserAvatarComponent } from '../user-avatar/user-avatar.component';
 @Component({
   selector: 'app-chat',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, AvatarModule, ButtonModule, InputTextModule, TagModule, UserAvatarComponent],
+  imports: [CommonModule, ReactiveFormsModule, AvatarModule, ButtonModule, InputTextModule, TagModule, TooltipModule, UserAvatarComponent],
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.scss']
 })

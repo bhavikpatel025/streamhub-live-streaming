@@ -1,51 +1,168 @@
 <div class="app-shell">
   <header class="app-shell__header">
     <div class="app-nav">
-      <a class="brand-mark" routerLink="/streams">
-        <span class="brand-mark__signal">{{ getUserInitial() }}</span>
-        <span class="brand-mark__copy">
-          <strong>StreamHub</strong>
-          <small>Live creator platform</small>
-        </span>
-      </a>
+      <div class="app-nav__left">
+        <a class="brand-mark" routerLink="/streams">
+          <span class="brand-mark__signal">{{ getUserInitial() }}</span>
+          <span class="brand-mark__copy">
+            <strong>StreamHub</strong>
+            <small>Live creator platform</small>
+          </span>
+        </a>
 
-      <nav class="desktop-actions">
-        <a class="app-link" routerLink="/streams">Browse</a>
+        <nav class="desktop-links">
+          <a class="app-link" routerLink="/streams">Browse</a>
+          <a *ngIf="isAuthenticated()" class="app-link" routerLink="/dashboard">Dashboard</a>
+        </nav>
+      </div>
 
+      <div class="desktop-actions">
         <button
           class="theme-toggle"
           (click)="toggleTheme()"
           [attr.aria-label]="themeService.isDark ? 'Switch to light mode' : 'Switch to dark mode'"
+          pTooltip="Toggle theme"
+          tooltipPosition="bottom"
+          tooltipStyleClass="app-tooltip"
           id="theme-toggle-btn"
         >
           <i class="pi" [ngClass]="themeService.isDark ? 'pi-moon' : 'pi-sun'"></i>
         </button>
 
         <ng-container *ngIf="isAuthenticated(); else loginLinks">
-          <a class="app-link" routerLink="/dashboard">Dashboard</a>
-          <p-menu #menu [model]="menuItems" [popup]="true" styleClass="user-menu"></p-menu>
-          <app-user-avatar
-            [username]="getUsername()"
-            [profileImageUrl]="authService.currentUserValue?.profileImageUrl"
-            [size]="32"
-            (click)="menu.toggle($event)"
-            style="cursor: pointer;"
-          ></app-user-avatar>
+          <div #notificationAnchor class="header-anchor">
+            <button
+              class="notification-toggle"
+              type="button"
+              (click)="toggleNotifications($event)"
+              aria-label="Open notifications"
+              pTooltip="Notifications"
+              tooltipPosition="bottom"
+              tooltipStyleClass="app-tooltip"
+            >
+              <i class="pi pi-bell"></i>
+              <span *ngIf="unreadNotificationsCount > 0" class="notification-badge">{{ unreadNotificationsCount }}</span>
+            </button>
+
+            <div *ngIf="notificationsOpen" class="notifications-dropdown">
+              <div class="notifications-dropdown__header">
+                <strong>Notifications</strong>
+                <button
+                  class="notifications-dropdown__clear"
+                  type="button"
+                  (click)="clearAllNotifications()"
+                  [disabled]="notifications.length === 0"
+                >
+                  Clear All
+                </button>
+              </div>
+
+              <div *ngIf="notifications.length === 0" class="notifications-dropdown__empty">
+                Live alerts will appear here as creators go live.
+              </div>
+
+              <div *ngIf="notifications.length > 0" class="notifications-dropdown__list">
+                <div
+                  *ngFor="let notification of notifications"
+                  class="notification-item"
+                  [class.notification-item--unread]="!notification.isRead"
+                >
+                  <div class="notification-item__main">
+                    <div class="notification-item__copy">
+                      <strong>{{ notification.message }}</strong>
+                    </div>
+
+                    <div class="notification-item__menu">
+                      <button
+                        class="notification-item__menu-trigger"
+                        type="button"
+                        (click)="toggleNotificationActions($event, notification.id)"
+                        aria-label="Open notification actions"
+                        pTooltip="More options"
+                        tooltipPosition="left"
+                        tooltipStyleClass="app-tooltip"
+                      >
+                        <i class="pi pi-ellipsis-h"></i>
+                      </button>
+
+                      <div *ngIf="isNotificationMenuOpen(notification.id)" class="notification-actions-menu">
+                        <button
+                          class="notification-actions-menu__delete"
+                          type="button"
+                          (click)="deleteNotification(notification)"                         
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <button class="app-button notification-item__action" type="button" (click)="watchNotification(notification)">
+                    Watch Now
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div #profileAnchor class="header-anchor">
+            <button
+              class="profile-toggle"
+              type="button"
+              (click)="toggleProfileMenu($event)"
+              aria-label="Open profile menu"
+              pTooltip="Account"
+              tooltipPosition="bottom"
+              tooltipStyleClass="app-tooltip">
+              <app-user-avatar
+                [username]="getUsername()"
+                [profileImageUrl]="authService.currentUserValue?.profileImageUrl"
+                [size]="32"
+              ></app-user-avatar>
+            </button>
+
+            <div *ngIf="profileMenuOpen" class="profile-dropdown">
+              <button class="profile-dropdown__action" type="button" (click)="openProfileSettings()">
+                <i class="pi pi-cog"></i>
+                <span>Profile Settings</span>
+              </button>
+              <button class="profile-dropdown__action profile-dropdown__action--danger" type="button" (click)="logout()">
+                <i class="pi pi-sign-out"></i>
+                <span>Logout</span>
+              </button>
+            </div>
+          </div>
         </ng-container>
 
         <ng-template #loginLinks>
           <a class="app-button app-button--secondary" routerLink="/login">Login</a>
           <a class="app-button" routerLink="/register">Create account</a>
         </ng-template>
-      </nav>
+      </div>
     </div>
   </header>
 
   <main class="app-shell__content">
-    <router-outlet></router-outlet>
+    <div class="app-content-container">
+      <router-outlet></router-outlet>
+    </div>
   </main>
 
-  <app-profile-settings
-    [(visible)]="profileSettingsVisible"
-  ></app-profile-settings>
+  <p-toast key="stream-started" position="top-right" [baseZIndex]="3000" styleClass="stream-started-toast">
+    <ng-template let-message pTemplate="message">
+      <div class="stream-toast">
+        <div class="stream-toast__pulse"></div>
+        <div class="stream-toast__copy">
+          <span class="stream-toast__eyebrow">Live now</span>
+          <strong>{{ message.summary }}</strong>
+          <span>{{ message.detail }}</span>
+        </div>
+        <button class="app-button stream-toast__action" type="button" (click)="watchNotification(message.data)">
+          Watch Now
+        </button>
+      </div>
+    </ng-template>
+  </p-toast>
+
+  <app-profile-settings [(visible)]="profileSettingsVisible"></app-profile-settings>
 </div>

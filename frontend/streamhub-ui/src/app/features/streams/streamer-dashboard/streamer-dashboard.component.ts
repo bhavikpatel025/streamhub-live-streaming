@@ -12,6 +12,7 @@ import { InputTextarea } from 'primeng/inputtextarea';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
+import { TooltipModule } from 'primeng/tooltip';
 import { ToolbarModule } from 'primeng/toolbar';
 import { SignalRService } from '../../../core/services/signalr.service';
 import { Stream, StreamKeyResponse } from '../../../core/models/stream.model';
@@ -31,6 +32,7 @@ import { UserAvatarComponent } from '../../shared/user-avatar/user-avatar.compon
     InputTextarea,
     TableModule,
     TagModule,
+    TooltipModule,
     DialogModule,
     ConfirmDialogModule,
     AvatarModule,

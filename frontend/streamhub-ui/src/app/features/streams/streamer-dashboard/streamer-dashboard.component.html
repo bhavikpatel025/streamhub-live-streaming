@@ -108,6 +108,9 @@
                 icon="pi pi-stop"
                 severity="danger"
                 [loading]="stopping"
+                pTooltip="Stop stream"
+                tooltipPosition="top"
+                tooltipStyleClass="app-tooltip"
                 (onClick)="stopStream()">
               </p-button>
             }
@@ -116,6 +119,9 @@
               label="Reveal stream key"
               icon="pi pi-key"
               severity="secondary"
+              pTooltip="Show stream key"
+              tooltipPosition="top"
+              tooltipStyleClass="app-tooltip"
               (onClick)="loadStreamKey()">
             </p-button>
           </div>

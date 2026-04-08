@@ -14,6 +14,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<Stream> Streams { get; set; }
     public DbSet<ChatMessage> ChatMessages { get; set; }
     public DbSet<StreamReaction> StreamReactions { get; set; }
+    public DbSet<Notification> Notifications { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -78,6 +79,27 @@ public class ApplicationDbContext : DbContext
                   .WithMany()
                   .HasForeignKey(e => e.UserId)
                   .OnDelete(DeleteBehavior.NoAction);
+        });
+
+        modelBuilder.Entity<Notification>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.StreamerName).IsRequired().HasMaxLength(50);
+            entity.Property(e => e.StreamTitle).IsRequired().HasMaxLength(200);
+            entity.Property(e => e.Message).IsRequired().HasMaxLength(300);
+            entity.Property(e => e.IsRead).HasDefaultValue(false);
+
+            entity.HasIndex(e => new { e.UserId, e.CreatedAt });
+
+            entity.HasOne(e => e.User)
+                  .WithMany()
+                  .HasForeignKey(e => e.UserId)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Stream)
+                  .WithMany()
+                  .HasForeignKey(e => e.StreamId)
+                  .OnDelete(DeleteBehavior.Cascade);
         });
     }
 }

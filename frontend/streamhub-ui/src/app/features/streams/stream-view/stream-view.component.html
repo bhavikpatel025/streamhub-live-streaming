@@ -37,6 +37,9 @@
                   [class.reaction-btn--active]="userReaction === 'LIKE'"
                   [disabled]="reactionLoading"
                   (click)="toggleReaction('LIKE')"
+                  pTooltip="Like stream"
+                  tooltipPosition="top"
+                  tooltipStyleClass="app-tooltip"
                   id="like-toggle-btn"
                 >
                   <i class="pi" [ngClass]="userReaction === 'LIKE' ? 'pi-thumbs-up-fill' : 'pi-thumbs-up'"></i>
@@ -48,6 +51,9 @@
                   [class.reaction-btn--active]="userReaction === 'DISLIKE'"
                   [disabled]="reactionLoading"
                   (click)="toggleReaction('DISLIKE')"
+                  pTooltip="Dislike stream"
+                  tooltipPosition="top"
+                  tooltipStyleClass="app-tooltip"
                   id="dislike-btn"
                 >
                   <i class="pi" [ngClass]="userReaction === 'DISLIKE' ? 'pi-thumbs-down-fill' : 'pi-thumbs-down'"></i>
