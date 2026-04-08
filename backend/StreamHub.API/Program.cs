@@ -64,12 +64,14 @@ builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IStreamRepository, StreamRepository>();
 builder.Services.AddScoped<IChatRepository, ChatRepository>();
+builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 
 // Services
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IStreamService, StreamService>();
 builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IStreamReactionService, StreamReactionService>();
 

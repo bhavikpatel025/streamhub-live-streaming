@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Http;
 using StreamHub.Application.DTOs.Auth;
 using StreamHub.Application.DTOs.Stream;
 using StreamHub.Application.DTOs.Chat;
+using StreamHub.Application.DTOs.Notification;
 
 using StreamHub.Application.DTOs.User;
 
@@ -38,6 +39,19 @@ public interface IUserService
     Task<UserProfileDto?> GetUserByIdAsync(int userId);
     Task<UploadProfilePictureResponseDto> UploadProfilePictureAsync(int userId, IFormFile file);
     Task RemoveProfilePictureAsync(int userId);
+}
+
+public interface INotificationService
+{
+    Task<IReadOnlyCollection<NotificationDto>> GetUserNotificationsAsync(int userId);
+    Task<IReadOnlyCollection<NotificationDispatchDto>> CreateStreamStartedNotificationsAsync(
+        int streamerUserId,
+        int streamId,
+        string streamerName,
+        string streamTitle);
+    Task<bool> DeleteNotificationAsync(int userId, int notificationId);
+    Task DeleteAllNotificationsAsync(int userId);
+    Task MarkAllAsReadAsync(int userId);
 }
 
 public interface IJwtService

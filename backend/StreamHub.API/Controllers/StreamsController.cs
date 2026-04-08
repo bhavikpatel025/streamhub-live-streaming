@@ -1,5 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using StreamHub.Application.DTOs.Stream;
 using StreamHub.Application.Interfaces;
 using System.Security.Claims;
@@ -12,11 +13,19 @@ public class StreamsController : ControllerBase
 {
     private readonly IStreamService _streamService;
     private readonly IStreamReactionService _streamReactionService;
+    private readonly INotificationService _notificationService;
+    private readonly IHubContext<StreamHub.API.Hubs.StreamHub> _hubContext;
 
-    public StreamsController(IStreamService streamService, IStreamReactionService streamReactionService)
+    public StreamsController(
+        IStreamService streamService,
+        IStreamReactionService streamReactionService,
+        INotificationService notificationService,
+        IHubContext<StreamHub.API.Hubs.StreamHub> hubContext)
     {
         _streamService = streamService;
         _streamReactionService = streamReactionService;
+        _notificationService = notificationService;
+        _hubContext = hubContext;
     }
 
     [HttpGet]
@@ -115,6 +124,24 @@ public class StreamsController : ControllerBase
         {
             var userId = GetUserId();
             await _streamService.StartStreamAsync(id, userId);
+
+            var stream = await _streamService.GetStreamByIdAsync(id);
+            if (stream != null)
+            {
+                var notifications = await _notificationService.CreateStreamStartedNotificationsAsync(
+                    userId,
+                    stream.Id,
+                    stream.Username,
+                    stream.Title);
+
+                foreach (var notification in notifications)
+                {
+                    await _hubContext.Clients
+                        .Group(StreamHub.API.Hubs.StreamHub.GetUserGroupName(notification.UserId))
+                        .SendAsync("StreamStartedNotification", notification.Notification);
+                }
+            }
+
             return Ok(new { message = "Stream started successfully" });
         }
         catch (UnauthorizedAccessException)

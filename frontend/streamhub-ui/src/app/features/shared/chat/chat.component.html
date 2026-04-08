@@ -1,7 +1,11 @@
 <section class="chat-shell">
   <header class="chat-shell__header">
     <div style="display: flex; align-items: center; gap: 0.5rem;">
-      <p-button icon="pi pi-angle-right" [text]="true" severity="secondary" rounded="true" size="small" (onClick)="onHideChat()"></p-button>
+      <p-button icon="pi pi-angle-right" [text]="true" severity="secondary" rounded="true" size="small"
+        (onClick)="onHideChat()"
+        pTooltip="Hide chat"
+        tooltipPosition="top"
+        tooltipStyleClass="app-tooltip"></p-button>
       <div>
         <span class="chat-shell__eyebrow">Live conversation</span>
         <h3 style="margin: 0.2rem 0 0 0;">Chat</h3>
@@ -20,10 +24,7 @@
 
     <ng-template #messageList>
       <div *ngFor="let message of messages; trackBy: trackByMessageId" class="chat-bubble">
-        <app-user-avatar 
-          [username]="message.username" 
-          [profileImageUrl]="message.profileImageUrl"
-          [size]="24">
+        <app-user-avatar [username]="message.username" [profileImageUrl]="message.profileImageUrl" [size]="24">
         </app-user-avatar>
         <div class="chat-bubble__content">
           <span class="chat-bubble__username">{{ '@' + message.username }}</span>
@@ -39,19 +40,13 @@
   </div>
 
   <form [formGroup]="messageForm" class="chat-shell__composer" (ngSubmit)="sendMessage()">
-    <input
-      pInputText
-      type="text"
-      formControlName="message"
-      placeholder="Send a message to chat..."
-      maxlength="500">
+    <input pInputText type="text" formControlName="message" placeholder="Send a message to chat..." maxlength="500">
 
-    <p-button
-      type="submit"
-      icon="pi pi-send"
-      [loading]="sending"
-      [disabled]="messageForm.invalid"
-      ariaLabel="Send message">
+    <p-button type="submit" icon="pi pi-send" [loading]="sending" [disabled]="messageForm.invalid"
+      ariaLabel="Send message"
+      pTooltip="Send message"
+      tooltipPosition="top"
+      tooltipStyleClass="app-tooltip">
     </p-button>
   </form>
 </section>

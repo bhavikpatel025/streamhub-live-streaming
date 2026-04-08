@@ -173,6 +173,26 @@ app-root {
   min-height: 100vh;
 }
 
+.app-tooltip {
+  .p-tooltip-text {
+    border: 1px solid var(--app-border-color);
+    border-radius: 0.75rem;
+    background: var(--app-surface-strong);
+    color: var(--app-text-color);
+    box-shadow: var(--app-shadow-soft);
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 0.45rem 0.65rem;
+  }
+
+  // .p-tooltip-arrow {
+  //   border-top-color: var(--app-surface-strong);
+  //   border-right-color: var(--app-surface-strong);
+  //   border-bottom-color: var(--app-surface-strong);
+  //   border-left-color: var(--app-surface-strong);
+  // }
+}
+
 /* ═══════════════════════════════════════════════════
    Layout utilities
    ═══════════════════════════════════════════════════ */

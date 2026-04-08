@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using StreamHub.Application.Interfaces;
 using System.Collections.Concurrent;
+using System.Security.Claims;
 
 namespace StreamHub.API.Hubs;
 
@@ -71,6 +72,17 @@ public class StreamHub : Hub
         await base.OnDisconnectedAsync(exception);
     }
 
+    public override async Task OnConnectedAsync()
+    {
+        var userIdClaim = Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (int.TryParse(userIdClaim, out var userId))
+        {
+            await Groups.AddToGroupAsync(Context.ConnectionId, GetUserGroupName(userId));
+        }
+
+        await base.OnConnectedAsync();
+    }
+
     private async Task BroadcastViewerCountAsync(int streamId)
     {
         try
@@ -91,6 +103,7 @@ public class StreamHub : Hub
     }
 
     private static string GetGroupName(int streamId) => $"stream_{streamId}";
+    public static string GetUserGroupName(int userId) => $"user_{userId}";
 
     private static int GetViewerCount(int streamId)
     {

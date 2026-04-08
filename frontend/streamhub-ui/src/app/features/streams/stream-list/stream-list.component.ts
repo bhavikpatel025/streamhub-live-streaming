@@ -6,12 +6,13 @@ import { StreamListItem } from '../../../core/models/stream.model';
 import { StreamService } from '../../../core/services/stream.service';
 import { SignalRService } from '../../../core/services/signalr.service';
 import { Subscription } from 'rxjs';
+import { TooltipModule } from 'primeng/tooltip';
 import { UserAvatarComponent } from '../../shared/user-avatar/user-avatar.component';
 
 @Component({
   selector: 'app-stream-list',
   standalone: true,
-  imports: [CommonModule, UserAvatarComponent],
+  imports: [CommonModule, TooltipModule, UserAvatarComponent],
   templateUrl: './stream-list.component.html',
   styleUrls: ['./stream-list.component.scss']
 })

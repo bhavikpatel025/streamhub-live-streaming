@@ -29,3 +29,18 @@ public interface IChatRepository
     Task<ChatMessage> CreateAsync(ChatMessage message);
     Task<IEnumerable<ChatMessage>> GetStreamMessagesAsync(int streamId, int limit = 50);
 }
+
+public interface INotificationRepository
+{
+    Task<IReadOnlyCollection<Notification>> CreateStreamStartedNotificationsAsync(
+        int streamerUserId,
+        int streamId,
+        string streamerName,
+        string streamTitle,
+        DateTime createdAt);
+    Task<IReadOnlyCollection<Notification>> GetByUserIdAsync(int userId);
+    Task<Notification?> GetByIdAsync(int id, int userId);
+    Task DeleteAsync(Notification notification);
+    Task DeleteAllByUserIdAsync(int userId);
+    Task MarkAllAsReadAsync(int userId);
+}
