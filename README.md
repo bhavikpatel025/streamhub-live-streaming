@@ -249,7 +249,7 @@ rtmp {
 ### Bhavik Patel
 
 - **GitHub:** [bhavikpatel025](https://github.com/bhavikpatel025)
-- **Repositories:** Check out my other full-stack clones like the [Video Meet Google alternative](https://https://github.com/bhavikpatel025/google-meet-clone)!
+- **Repositories:** Check out my other full-stack clones like the [Video Meet Google alternative](https://github.com/bhavikpatel025/google-meet-clone.git)!
 
 ---
 
