@@ -139,7 +139,7 @@ StreamHub Repository
 
 ### 1️⃣ Clone the Repository
 ```bash
-git clone https://github.com/yourusername/StreamHub.git
+git clone https://github.com/bhavikpatel025/streamhub-live-streaming.git
 cd StreamHub
 ```
 
@@ -249,7 +249,7 @@ rtmp {
 ### Bhavik Patel
 
 - **GitHub:** [bhavikpatel025](https://github.com/bhavikpatel025)
-- **Repositories:** Check out my other full-stack clones like the [Video Meet Google alternative](https://github.com/bhavikpatel025/video-meet-clone)!
+- **Repositories:** Check out my other full-stack clones like the [Video Meet Google alternative](https://https://github.com/bhavikpatel025/google-meet-clone)!
 
 ---
 
